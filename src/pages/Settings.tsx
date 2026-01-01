@@ -181,7 +181,7 @@ export default function Settings() {
                     </div>
                     <div className="space-y-2">
                       <Label>Size (Hectares)</Label>
-                      <Input value={farm.size_hectares || 'Not set'} disabled />
+                      <Input value={farm.size_hectares?.toString() || 'Not set'} disabled />
                     </div>
                     <div className="space-y-2">
                       <Label>Farm Types</Label>
