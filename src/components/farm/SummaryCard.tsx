@@ -1,11 +1,15 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { LucideIcon } from 'lucide-react';
+import { forwardRef, SVGProps, RefAttributes } from 'react';
+
+type IconComponent = React.ForwardRefExoticComponent<
+  Omit<SVGProps<SVGSVGElement>, 'ref'> & RefAttributes<SVGSVGElement>
+>;
 
 interface SummaryCardProps {
   title: string;
   value: string | number;
   subtitle?: string;
-  icon: LucideIcon;
+  icon: IconComponent;
   trend?: {
     value: number;
     isPositive: boolean;

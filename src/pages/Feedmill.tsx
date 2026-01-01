@@ -14,7 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Factory, Fuel, Package, DollarSign } from 'lucide-react';
+import { Factory, Fuel, Package, Boxes } from 'lucide-react';
+import { NairaIcon } from '@/components/icons/NairaIcon';
 import { format } from 'date-fns';
 
 type TabType = 'ingredients' | 'power' | 'production';
@@ -197,7 +198,7 @@ export default function Feedmill() {
         <SummaryCard title="Ingredient Cost" value={`₦${totalIngredientCost.toLocaleString()}`} icon={Package} />
         <SummaryCard title="Power/Fuel Cost" value={`₦${totalPowerCost.toLocaleString()}`} icon={Fuel} />
         <SummaryCard title="Total Produced" value={`${totalProduced.toLocaleString()} kg`} icon={Factory} />
-        <SummaryCard title="Bags Produced" value={totalBags.toLocaleString()} icon={DollarSign} />
+        <SummaryCard title="Bags Produced" value={totalBags.toLocaleString()} icon={Boxes} />
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>

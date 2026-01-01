@@ -14,7 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Wheat, Sprout, DollarSign, TrendingUp } from 'lucide-react';
+import { Wheat, Sprout, TrendingUp } from 'lucide-react';
+import { NairaIcon } from '@/components/icons/NairaIcon';
 import { format } from 'date-fns';
 
 type TabType = 'production' | 'sales';
@@ -165,7 +166,7 @@ export default function Crops() {
         <SummaryCard title="Crop Types" value={uniqueCrops.length} icon={Wheat} />
         <SummaryCard title="Activities Logged" value={totalActivities} icon={Sprout} />
         <SummaryCard title="Total Harvested" value={`${totalHarvested.toLocaleString()} kg`} icon={TrendingUp} />
-        <SummaryCard title="Total Revenue" value={`₦${totalRevenue.toLocaleString()}`} icon={DollarSign} />
+        <SummaryCard title="Total Revenue" value={`₦${totalRevenue.toLocaleString()}`} icon={NairaIcon} />
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>
