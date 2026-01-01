@@ -37,43 +37,16 @@ export function FarmSetup() {
         throw new Error('Please select at least one farm type');
       }
 
-      // Create the farm
-      const { data: farm, error: farmError } = await supabase
-        .from('farms')
-        .insert({
-          name: name.trim(),
-          location: location.trim() || null,
-          size_hectares: sizeHectares,
-          farm_type: selectedTypes,
-        })
-        .select()
-        .single();
+      // Use the database function to create farm, role, and update profile atomically
+      const { data, error } = await supabase.rpc('create_farm_with_role', {
+        _name: name.trim(),
+        _location: location.trim() || null,
+        _size_hectares: sizeHectares,
+        _farm_type: selectedTypes,
+      });
 
-      if (farmError) throw farmError;
-
-      // Update the user's profile with the farm ID and mark onboarding complete
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          farm_id: farm.id,
-          onboarding_completed: true,
-        })
-        .eq('user_id', user!.id);
-
-      if (profileError) throw profileError;
-
-      // Create user_roles entry
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: user!.id,
-          farm_id: farm.id,
-          role: 'admin',
-        });
-
-      if (roleError) throw roleError;
-
-      return farm;
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['farmId'] });
