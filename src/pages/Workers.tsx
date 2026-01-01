@@ -6,6 +6,7 @@ import { ModuleHeader } from "@/components/farm/ModuleHeader";
 import { SummaryCard } from "@/components/farm/SummaryCard";
 import { DataTable } from "@/components/farm/DataTable";
 import { RecordFormDialog } from "@/components/farm/RecordFormDialog";
+import { TeamManagement } from "@/components/workers/TeamManagement";
 import { useToast } from "@/hooks/use-toast";
 import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Worker {
   id: string;
@@ -156,19 +158,32 @@ const Workers = () => {
     <div className="space-y-6">
       <ModuleHeader
         title="Worker Management"
-        description="Manage farm workers and staff"
+        description="Manage farm workers and app users"
         onAdd={handleAdd}
         addLabel="Add Worker"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <SummaryCard title="Total Workers" value={totalWorkers} icon={Users} />
-        <SummaryCard title="Active" value={activeWorkers} icon={UserCheck} />
-        <SummaryCard title="Inactive" value={inactiveWorkers} icon={UserX} />
-        <SummaryCard title="Monthly Payroll" value={`₦${totalSalary.toLocaleString()}`} icon={DollarSign} />
-      </div>
+      <Tabs defaultValue="workers" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="workers">Farm Workers</TabsTrigger>
+          <TabsTrigger value="team">App Users & Roles</TabsTrigger>
+        </TabsList>
 
-      <DataTable columns={columns} data={workers} onEdit={handleEdit} />
+        <TabsContent value="workers" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <SummaryCard title="Total Workers" value={totalWorkers} icon={Users} />
+            <SummaryCard title="Active" value={activeWorkers} icon={UserCheck} />
+            <SummaryCard title="Inactive" value={inactiveWorkers} icon={UserX} />
+            <SummaryCard title="Monthly Payroll" value={`₦${totalSalary.toLocaleString()}`} icon={DollarSign} />
+          </div>
+
+          <DataTable columns={columns} data={workers} onEdit={handleEdit} />
+        </TabsContent>
+
+        <TabsContent value="team">
+          <TeamManagement />
+        </TabsContent>
+      </Tabs>
 
       <RecordFormDialog open={dialogOpen} onOpenChange={setDialogOpen} title={editingRecord ? "Edit Worker" : "Add Worker"}>
         <form onSubmit={handleSubmit} className="space-y-4">
