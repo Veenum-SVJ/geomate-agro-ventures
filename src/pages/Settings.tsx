@@ -10,8 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { User, Building2, Palette, Bell, Upload } from 'lucide-react';
-import { FarmSetup } from '@/components/settings/FarmSetup';
+import { User, Building2, Palette, Bell } from 'lucide-react';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -29,7 +28,7 @@ export default function Settings() {
         .from('profiles')
         .select('*')
         .eq('user_id', user!.id)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -44,7 +43,7 @@ export default function Settings() {
         .from('farms')
         .select('*')
         .eq('id', farmId!)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -67,22 +66,6 @@ export default function Settings() {
     onError: () => toast.error('Failed to update profile'),
   });
 
-  // Update farm mutation
-  const updateFarm = useMutation({
-    mutationFn: async (updates: { name?: string; location?: string; size_hectares?: number }) => {
-      const { error } = await supabase
-        .from('farms')
-        .update(updates)
-        .eq('id', farmId!);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['farm'] });
-      toast.success('Farm updated');
-    },
-    onError: () => toast.error('Failed to update farm'),
-  });
-
   const handleThemeToggle = (checked: boolean) => {
     setDarkMode(checked);
     if (checked) {
@@ -103,23 +86,8 @@ export default function Settings() {
     });
   };
 
-  const handleFarmSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    updateFarm.mutate({
-      name: formData.get('name') as string,
-      location: formData.get('location') as string,
-      size_hectares: parseFloat(formData.get('size_hectares') as string) || undefined,
-    });
-  };
-
   if (profileLoading) {
     return <div className="p-6">Loading...</div>;
-  }
-
-  // Show farm setup if no farm exists
-  if (!farmId && !farmLoading) {
-    return <FarmSetup />;
   }
 
   return (
@@ -195,50 +163,38 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle>Farm Details</CardTitle>
-              <CardDescription>Manage your farm information</CardDescription>
+              <CardDescription>Geomate Agro Ventures farm information</CardDescription>
             </CardHeader>
             <CardContent>
               {farmLoading ? (
                 <p>Loading farm details...</p>
               ) : farm ? (
-                <form onSubmit={handleFarmSubmit} className="space-y-4">
+                <div className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="farm_name">Farm Name</Label>
-                      <Input 
-                        id="farm_name" 
-                        name="name" 
-                        defaultValue={farm.name} 
-                      />
+                      <Label>Farm Name</Label>
+                      <Input value={farm.name} disabled />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="location">Location</Label>
-                      <Input 
-                        id="location" 
-                        name="location" 
-                        defaultValue={farm.location || ''} 
-                      />
+                      <Label>Location</Label>
+                      <Input value={farm.location || 'Nigeria'} disabled />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="size_hectares">Size (Hectares)</Label>
-                      <Input 
-                        id="size_hectares" 
-                        name="size_hectares" 
-                        type="number"
-                        step="0.1"
-                        defaultValue={farm.size_hectares || ''} 
-                      />
+                      <Label>Size (Hectares)</Label>
+                      <Input value={farm.size_hectares || 'Not set'} disabled />
                     </div>
                     <div className="space-y-2">
                       <Label>Farm Types</Label>
-                      <Input value={farm.farm_type?.join(', ') || 'Not set'} disabled />
+                      <Input value={farm.farm_type?.join(', ') || 'Not set'} disabled className="capitalize" />
                     </div>
                   </div>
-                  <Button type="submit" disabled={updateFarm.isPending}>
-                    {updateFarm.isPending ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                </form>
-              ) : null}
+                  <p className="text-sm text-muted-foreground">
+                    Farm details are managed centrally for Geomate Agro Ventures.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">Farm information not available.</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
