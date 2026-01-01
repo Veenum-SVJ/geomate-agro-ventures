@@ -7,7 +7,8 @@ import { SummaryCard } from "@/components/farm/SummaryCard";
 import { DataTable } from "@/components/farm/DataTable";
 import { RecordFormDialog } from "@/components/farm/RecordFormDialog";
 import { useToast } from "@/hooks/use-toast";
-import { Package, AlertTriangle, DollarSign, Boxes } from "lucide-react";
+import { Package, AlertTriangle, Boxes } from "lucide-react";
+import { NairaIcon } from '@/components/icons/NairaIcon';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -174,7 +175,7 @@ const Inventory = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <SummaryCard title="Total Items" value={totalItems} icon={Package} />
         <SummaryCard title="Low Stock" value={lowStockItems} icon={AlertTriangle} />
-        <SummaryCard title="Inventory Value" value={`₦${totalValue.toLocaleString()}`} icon={DollarSign} />
+        <SummaryCard title="Inventory Value" value={`₦${totalValue.toLocaleString()}`} icon={NairaIcon} />
         <SummaryCard title="Categories" value={categories} icon={Boxes} />
       </div>
 

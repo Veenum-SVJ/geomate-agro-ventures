@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
-import { FileText, Download, TrendingUp, TrendingDown, DollarSign, Calendar } from 'lucide-react';
+import { FileText, Download, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
+import { NairaIcon } from '@/components/icons/NairaIcon';
 import { supabase } from '@/integrations/supabase/client';
 import { useFarmId } from '@/hooks/useFarmId';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -342,7 +343,7 @@ const Reports = () => {
         <Card className={`border-l-4 ${netProfit >= 0 ? 'border-l-primary' : 'border-l-orange-500'}`}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
+              <NairaIcon className="h-4 w-4" />
               Net Profit
             </CardTitle>
           </CardHeader>

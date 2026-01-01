@@ -13,7 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Fish, Droplets, Thermometer, DollarSign } from 'lucide-react';
+import { Fish, Droplets, Thermometer } from 'lucide-react';
+import { NairaIcon } from '@/components/icons/NairaIcon';
 import { format } from 'date-fns';
 
 type TabType = 'production' | 'sales';
@@ -177,7 +178,7 @@ export default function Fishery() {
         <SummaryCard title="Total Stock" value={totalStock.toLocaleString()} icon={Fish} />
         <SummaryCard title="Avg pH Level" value={avgPh} icon={Droplets} />
         <SummaryCard title="Avg Temp" value={`${avgTemp}°C`} icon={Thermometer} />
-        <SummaryCard title="Total Revenue" value={`₦${totalRevenue.toLocaleString()}`} icon={DollarSign} />
+        <SummaryCard title="Total Revenue" value={`₦${totalRevenue.toLocaleString()}`} icon={NairaIcon} />
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>

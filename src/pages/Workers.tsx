@@ -8,7 +8,8 @@ import { DataTable } from "@/components/farm/DataTable";
 import { RecordFormDialog } from "@/components/farm/RecordFormDialog";
 import { TeamManagement } from "@/components/workers/TeamManagement";
 import { useToast } from "@/hooks/use-toast";
-import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
+import { Users, UserCheck, UserX } from "lucide-react";
+import { NairaIcon } from '@/components/icons/NairaIcon';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -174,7 +175,7 @@ const Workers = () => {
             <SummaryCard title="Total Workers" value={totalWorkers} icon={Users} />
             <SummaryCard title="Active" value={activeWorkers} icon={UserCheck} />
             <SummaryCard title="Inactive" value={inactiveWorkers} icon={UserX} />
-            <SummaryCard title="Monthly Payroll" value={`₦${totalSalary.toLocaleString()}`} icon={DollarSign} />
+            <SummaryCard title="Monthly Payroll" value={`₦${totalSalary.toLocaleString()}`} icon={NairaIcon} />
           </div>
 
           <DataTable columns={columns} data={workers} onEdit={handleEdit} />
