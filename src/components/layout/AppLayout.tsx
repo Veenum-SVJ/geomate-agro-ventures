@@ -1,21 +1,102 @@
-import { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { Loader2 } from 'lucide-react';
 
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const SESSION_KEY = 'admin_session_timestamp';
+
 export function AppLayout() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [sessionValid, setSessionValid] = useState(false);
+  const [checking, setChecking] = useState(true);
 
+  // Check and validate admin session
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/admin');
-    }
-  }, [user, loading, navigate]);
+    if (loading) return;
 
-  if (loading) {
+    if (!user) {
+      navigate('/admin');
+      return;
+    }
+
+    // Check if session is still valid (within timeout)
+    const lastActivity = sessionStorage.getItem(SESSION_KEY);
+    const now = Date.now();
+
+    if (!lastActivity) {
+      // No session - require fresh login
+      sessionStorage.removeItem(SESSION_KEY);
+      signOut();
+      navigate('/admin', { state: { requireReauth: true } });
+      return;
+    }
+
+    const lastActivityTime = parseInt(lastActivity, 10);
+    if (now - lastActivityTime > SESSION_TIMEOUT_MS) {
+      // Session expired - require fresh login
+      sessionStorage.removeItem(SESSION_KEY);
+      signOut();
+      navigate('/admin', { state: { sessionExpired: true } });
+      return;
+    }
+
+    // Session is valid - update timestamp
+    sessionStorage.setItem(SESSION_KEY, now.toString());
+    setSessionValid(true);
+    setChecking(false);
+  }, [user, loading, navigate, signOut]);
+
+  // Update session timestamp on user activity
+  useEffect(() => {
+    if (!sessionValid) return;
+
+    const updateActivity = () => {
+      sessionStorage.setItem(SESSION_KEY, Date.now().toString());
+    };
+
+    // Update on route changes
+    updateActivity();
+
+    // Update on user interactions
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, updateActivity, { passive: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, updateActivity);
+      });
+    };
+  }, [sessionValid, location.pathname]);
+
+  // Check session periodically
+  useEffect(() => {
+    if (!sessionValid) return;
+
+    const interval = setInterval(() => {
+      const lastActivity = sessionStorage.getItem(SESSION_KEY);
+      if (!lastActivity) return;
+
+      const now = Date.now();
+      const lastActivityTime = parseInt(lastActivity, 10);
+      
+      if (now - lastActivityTime > SESSION_TIMEOUT_MS) {
+        sessionStorage.removeItem(SESSION_KEY);
+        signOut();
+        navigate('/admin', { state: { sessionExpired: true } });
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [sessionValid, navigate, signOut]);
+
+  if (loading || checking) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -26,7 +107,7 @@ export function AppLayout() {
     );
   }
 
-  if (!user) {
+  if (!user || !sessionValid) {
     return null;
   }
 
