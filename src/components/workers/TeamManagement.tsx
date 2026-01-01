@@ -12,9 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Shield, ShieldCheck, User, Trash2, UserPlus, Mail, Clock, X } from "lucide-react";
+import { Shield, ShieldCheck, User, Trash2, UserPlus, Mail, Clock, X, Info, Check, Minus } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
 import { format } from "date-fns";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -472,6 +473,147 @@ export function TeamManagement() {
           </CardContent>
         </Card>
       )}
+
+      {/* Role Permissions Reference */}
+      <Card>
+        <Collapsible>
+          <CardHeader className="pb-3">
+            <CollapsibleTrigger className="flex items-center justify-between w-full text-left">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Info className="h-5 w-5" />
+                  Role Permissions
+                </CardTitle>
+                <CardDescription>
+                  Click to see what each role can do
+                </CardDescription>
+              </div>
+            </CollapsibleTrigger>
+          </CardHeader>
+          <CollapsibleContent>
+            <CardContent className="pt-0">
+              <div className="grid gap-4 md:grid-cols-3">
+                {/* Admin */}
+                <div className="rounded-lg border bg-primary/5 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ShieldCheck className="h-5 w-5 text-primary" />
+                    <h4 className="font-semibold text-primary">Admin</h4>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">Full access to all features</p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      View all farm data
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Add & edit records
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Delete records
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Manage team & roles
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Invite new users
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Manage farm settings
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Manage workers
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Manager */}
+                <div className="rounded-lg border bg-amber-500/5 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Shield className="h-5 w-5 text-amber-500" />
+                    <h4 className="font-semibold text-amber-600">Manager</h4>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">View and edit farm data</p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      View all farm data
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Add & edit records
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot delete records</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot manage team</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot invite users</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot change settings</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot manage workers</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Worker */}
+                <div className="rounded-lg border bg-muted/30 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <h4 className="font-semibold">Worker</h4>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">Basic access for daily tasks</p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      View all farm data
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Add & edit records
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot delete records</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot manage team</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot invite users</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot change settings</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Cannot manage workers</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
     </div>
   );
 }
