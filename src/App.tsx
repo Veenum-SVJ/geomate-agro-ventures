@@ -17,6 +17,7 @@ import ContactPage from "./pages/public/ContactPage";
 
 // Auth
 import Auth from "./pages/Auth";
+import AcceptInvite from "./pages/AcceptInvite";
 
 // CMS pages
 import CMSDashboard from "./pages/cms/CMSDashboard";
@@ -61,6 +62,8 @@ const App = () => (
 
             {/* Auth */}
             <Route path="/admin" element={<Auth />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/accept-invite" element={<AcceptInvite />} />
 
             {/* Admin CMS & FarmFlow */}
             <Route element={<AppLayout />}>
