@@ -129,7 +129,16 @@ export default function Crops() {
   };
 
   if (farmLoading) return <div className="p-6">Loading...</div>;
-  if (!farmId) return <div className="p-6"><p className="text-muted-foreground">Please complete your farm setup first.</p></div>;
+  if (!farmId) {
+    return (
+      <div className="p-6 flex flex-col items-center justify-center min-h-[50vh] text-center">
+        <Wheat className="h-12 w-12 text-muted-foreground mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Farm Setup Required</h2>
+        <p className="text-muted-foreground mb-4">Please complete your farm setup to access Crops Management.</p>
+        <Button onClick={() => window.location.href = '/admin/settings'}>Go to Settings</Button>
+      </div>
+    );
+  }
 
   const productionColumns = [
     { key: 'record_date', header: 'Date', render: (r: typeof productionData[0]) => format(new Date(r.record_date), 'MMM d, yyyy') },
