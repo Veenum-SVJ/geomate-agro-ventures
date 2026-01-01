@@ -12,6 +12,10 @@ import Poultry from "./pages/Poultry";
 import Fishery from "./pages/Fishery";
 import Crops from "./pages/Crops";
 import Feedmill from "./pages/Feedmill";
+import Tasks from "./pages/Tasks";
+import Workers from "./pages/Workers";
+import Customers from "./pages/Customers";
+import Inventory from "./pages/Inventory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +36,10 @@ const App = () => (
               <Route path="/fishery" element={<Fishery />} />
               <Route path="/crops" element={<Crops />} />
               <Route path="/feedmill" element={<Feedmill />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/workers" element={<Workers />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/inventory" element={<Inventory />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
