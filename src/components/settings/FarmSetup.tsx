@@ -80,7 +80,7 @@ export function FarmSetup() {
       queryClient.invalidateQueries({ queryKey: ['farmId'] });
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       toast.success('Farm created successfully!');
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to create farm');
