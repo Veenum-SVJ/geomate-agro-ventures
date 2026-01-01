@@ -176,9 +176,10 @@ export function FarmSetup() {
                     <Checkbox 
                       id={type.id}
                       checked={selectedTypes.includes(type.id)}
-                      onCheckedChange={() => toggleFarmType(type.id)}
+                      onCheckedChange={() => {}}
+                      className="pointer-events-none"
                     />
-                    <Label htmlFor={type.id} className="cursor-pointer font-normal">
+                    <Label htmlFor={type.id} className="cursor-pointer font-normal pointer-events-none">
                       {type.label}
                     </Label>
                   </div>
