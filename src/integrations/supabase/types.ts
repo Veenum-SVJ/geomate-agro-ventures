@@ -123,6 +123,48 @@ export type Database = {
           },
         ]
       }
+      customers: {
+        Row: {
+          address: string | null
+          created_at: string
+          created_by: string | null
+          customer_type: string | null
+          email: string | null
+          farm_id: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_type?: string | null
+          email?: string | null
+          farm_id: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_type?: string | null
+          email?: string | null
+          farm_id?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       farms: {
         Row: {
           created_at: string
@@ -418,6 +460,57 @@ export type Database = {
           },
         ]
       }
+      inventory: {
+        Row: {
+          category: string
+          cost_per_unit: number | null
+          created_at: string
+          created_by: string | null
+          farm_id: string
+          id: string
+          item_name: string
+          last_restocked: string | null
+          min_stock_level: number | null
+          notes: string | null
+          quantity: number
+          supplier: string | null
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          cost_per_unit?: number | null
+          created_at?: string
+          created_by?: string | null
+          farm_id: string
+          id?: string
+          item_name: string
+          last_restocked?: string | null
+          min_stock_level?: number | null
+          notes?: string | null
+          quantity?: number
+          supplier?: string | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cost_per_unit?: number | null
+          created_at?: string
+          created_by?: string | null
+          farm_id?: string
+          id?: string
+          item_name?: string
+          last_restocked?: string | null
+          min_stock_level?: number | null
+          notes?: string | null
+          quantity?: number
+          supplier?: string | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       poultry_production: {
         Row: {
           created_at: string
@@ -621,6 +714,51 @@ export type Database = {
           },
         ]
       }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          farm_id: string
+          id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          farm_id: string
+          id?: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          farm_id?: string
+          id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -652,6 +790,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      workers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string | null
+          farm_id: string
+          full_name: string
+          hire_date: string | null
+          id: string
+          notes: string | null
+          phone: string | null
+          role: string
+          salary: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          farm_id: string
+          full_name: string
+          hire_date?: string | null
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          role?: string
+          salary?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          farm_id?: string
+          full_name?: string
+          hire_date?: string | null
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          role?: string
+          salary?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
