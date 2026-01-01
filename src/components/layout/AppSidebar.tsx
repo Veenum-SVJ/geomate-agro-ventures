@@ -43,32 +43,26 @@ const menuItems = [
   {
     group: 'Overview',
     items: [
-      { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+      { title: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     ],
   },
   {
     group: 'Farm Operations',
     items: [
-      { title: 'Poultry', icon: Egg, path: '/poultry' },
-      { title: 'Fishery', icon: Fish, path: '/fishery' },
-      { title: 'Crops', icon: Wheat, path: '/crops' },
-      { title: 'Feedmill', icon: Factory, path: '/feedmill' },
+      { title: 'Poultry', icon: Egg, path: '/admin/poultry' },
+      { title: 'Fishery', icon: Fish, path: '/admin/fishery' },
+      { title: 'Crops', icon: Wheat, path: '/admin/crops' },
+      { title: 'Feedmill', icon: Factory, path: '/admin/feedmill' },
     ],
   },
   {
     group: 'Management',
     items: [
-      { title: 'Inventory', icon: Package, path: '/inventory' },
-      { title: 'Tasks', icon: ClipboardList, path: '/tasks' },
-      { title: 'Workers', icon: Users, path: '/workers' },
-      { title: 'Customers', icon: UserCircle, path: '/customers' },
-      { title: 'Reports', icon: FileText, path: '/reports' },
-    ],
-  },
-  {
-    group: 'Community',
-    items: [
-      { title: 'Community Hub', icon: MessageSquare, path: '/community' },
+      { title: 'Inventory', icon: Package, path: '/admin/inventory' },
+      { title: 'Tasks', icon: ClipboardList, path: '/admin/tasks' },
+      { title: 'Workers', icon: Users, path: '/admin/workers' },
+      { title: 'Customers', icon: UserCircle, path: '/admin/customers' },
+      { title: 'Reports', icon: FileText, path: '/admin/reports' },
     ],
   },
 ];
@@ -80,7 +74,7 @@ export function AppSidebar() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/auth');
+    navigate('/admin');
   };
 
   const getInitials = (name?: string | null) => {
@@ -133,8 +127,8 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={location.pathname === '/settings'}
-              onClick={() => navigate('/settings')}
+              isActive={location.pathname === '/admin/settings'}
+              onClick={() => navigate('/admin/settings')}
             >
               <Settings className="h-4 w-4" />
               <span>Settings</span>
