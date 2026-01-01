@@ -1,9 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { forwardRef, SVGProps, RefAttributes } from 'react';
+import { LucideIcon } from 'lucide-react';
+import { ComponentType, SVGProps } from 'react';
 
-type IconComponent = React.ForwardRefExoticComponent<
-  Omit<SVGProps<SVGSVGElement>, 'ref'> & RefAttributes<SVGSVGElement>
->;
+type IconComponent = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
 interface SummaryCardProps {
   title: string;
