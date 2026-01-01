@@ -6,9 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Building2, MapPin, Ruler, Leaf } from 'lucide-react';
+import { Building2, MapPin, Ruler, Leaf, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const farmTypes = [
@@ -164,25 +163,27 @@ export function FarmSetup() {
               </p>
               <div className="grid grid-cols-2 gap-3">
                 {farmTypes.map((type) => (
-                  <div
+                  <button
                     key={type.id}
-                    className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
+                    type="button"
+                    className={`flex items-center gap-3 rounded-lg border p-3 text-left transition-colors ${
                       selectedTypes.includes(type.id) 
                         ? 'border-primary bg-primary/5' 
                         : 'border-border hover:border-primary/50'
                     }`}
                     onClick={() => toggleFarmType(type.id)}
                   >
-                    <Checkbox 
-                      id={type.id}
-                      checked={selectedTypes.includes(type.id)}
-                      onCheckedChange={() => {}}
-                      className="pointer-events-none"
-                    />
-                    <Label htmlFor={type.id} className="cursor-pointer font-normal pointer-events-none">
+                    <div className={`flex h-4 w-4 items-center justify-center rounded border ${
+                      selectedTypes.includes(type.id) 
+                        ? 'border-primary bg-primary text-primary-foreground' 
+                        : 'border-muted-foreground'
+                    }`}>
+                      {selectedTypes.includes(type.id) && <Check className="h-3 w-3" />}
+                    </div>
+                    <span className="font-normal">
                       {type.label}
-                    </Label>
-                  </div>
+                    </span>
+                  </button>
                 ))}
               </div>
             </div>
