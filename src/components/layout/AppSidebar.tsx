@@ -35,9 +35,9 @@ import {
   Settings,
   LogOut,
   ChevronUp,
-  Leaf,
   FileText,
 } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 const menuItems = [
   {
@@ -96,16 +96,8 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-sidebar-border">
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-            <Leaf className="h-6 w-6 text-primary-foreground" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-sidebar-foreground">
-              FarmFlow
-            </span>
-            <span className="text-xs text-muted-foreground">NG</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="FarmSync NG" className="h-12 w-auto" />
         </div>
       </SidebarHeader>
 
