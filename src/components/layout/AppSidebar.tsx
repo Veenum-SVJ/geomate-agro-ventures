@@ -1,5 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Sidebar,
   SidebarContent,
@@ -84,6 +86,20 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/admin');
@@ -160,14 +176,14 @@ export function AppSidebar() {
           <DropdownMenuTrigger asChild>
             <button className="flex w-full items-center gap-3 rounded-lg p-2 hover:bg-sidebar-accent transition-colors">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user?.user_metadata?.avatar_url} />
+                <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
                 <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                  {getInitials(user?.user_metadata?.full_name || user?.email)}
+                  {getInitials(profile?.full_name || user?.email)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-1 flex-col items-start text-sm">
                 <span className="font-medium text-sidebar-foreground truncate max-w-[140px]">
-                  {user?.user_metadata?.full_name || 'User'}
+                  {profile?.full_name || 'User'}
                 </span>
                 <span className="text-xs text-muted-foreground truncate max-w-[140px]">
                   {user?.email}
