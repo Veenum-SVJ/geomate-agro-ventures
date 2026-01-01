@@ -18,7 +18,14 @@ import ContactPage from "./pages/public/ContactPage";
 // Auth
 import Auth from "./pages/Auth";
 
-// Admin pages
+// CMS pages
+import CMSDashboard from "./pages/cms/CMSDashboard";
+import CMSProducts from "./pages/cms/CMSProducts";
+import CMSGallery from "./pages/cms/CMSGallery";
+import CMSPages from "./pages/cms/CMSPages";
+import CMSInquiries from "./pages/cms/CMSInquiries";
+
+// Admin pages (FarmFlow)
 import Dashboard from "./pages/Dashboard";
 import Poultry from "./pages/Poultry";
 import Fishery from "./pages/Fishery";
@@ -55,8 +62,16 @@ const App = () => (
             {/* Auth */}
             <Route path="/admin" element={<Auth />} />
 
-            {/* Admin CMS (FarmFlow) */}
+            {/* Admin CMS & FarmFlow */}
             <Route element={<AppLayout />}>
+              {/* Website CMS */}
+              <Route path="/admin/cms" element={<CMSDashboard />} />
+              <Route path="/admin/cms/products" element={<CMSProducts />} />
+              <Route path="/admin/cms/gallery" element={<CMSGallery />} />
+              <Route path="/admin/cms/pages" element={<CMSPages />} />
+              <Route path="/admin/cms/inquiries" element={<CMSInquiries />} />
+              
+              {/* FarmFlow */}
               <Route path="/admin/dashboard" element={<Dashboard />} />
               <Route path="/admin/poultry" element={<Poultry />} />
               <Route path="/admin/fishery" element={<Fishery />} />
