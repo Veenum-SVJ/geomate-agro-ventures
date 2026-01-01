@@ -26,7 +26,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate('/admin/cms');
     }
   }, [user, navigate]);
 
@@ -93,7 +93,7 @@ const Auth = () => {
     } else {
       toast({
         title: 'Account created!',
-        description: 'Welcome to FarmFlow NG. Redirecting to dashboard...',
+        description: 'Welcome to Geomate Agro. Redirecting to dashboard...',
       });
     }
   };
@@ -116,12 +116,15 @@ const Auth = () => {
       <div className="w-full max-w-md animate-fade-in">
         {/* Logo and branding */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <Leaf className="w-8 h-8 text-primary" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary mb-4">
+            <span className="text-primary-foreground font-bold text-2xl">G</span>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">FarmFlow NG</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            <span>Geomate</span>
+            <span className="text-primary"> Agro</span>
+          </h1>
           <p className="text-muted-foreground mt-2">
-            Your complete farm management solution
+            Admin Dashboard Login
           </p>
         </div>
 

@@ -175,16 +175,17 @@ export function PublicLayout() {
             </div>
           </div>
 
-          <div className="border-t border-border mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="border-t border-border mt-8 pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} Geomate Agro Ventures. All rights reserved.
+              <span className="mx-2">•</span>
+              <Link
+                to="/admin"
+                className="hover:text-foreground transition-colors"
+              >
+                Admin
+              </Link>
             </p>
-            <Link
-              to="/admin"
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Admin Login
-            </Link>
           </div>
         </div>
       </footer>
