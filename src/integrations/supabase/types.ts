@@ -979,6 +979,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_farm_with_role: {
+        Args: {
+          _farm_type?: string[]
+          _location?: string
+          _name: string
+          _size_hectares?: number
+        }
+        Returns: string
+      }
       farm_has_no_roles: { Args: { _farm_id: string }; Returns: boolean }
       get_user_farm_id: { Args: { _user_id: string }; Returns: string }
       get_user_farm_ids: { Args: { _user_id: string }; Returns: string[] }
