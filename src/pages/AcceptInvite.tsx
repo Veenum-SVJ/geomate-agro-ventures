@@ -50,12 +50,21 @@ const AcceptInvite = () => {
         return;
       }
 
-      const result = data as { success: boolean; error?: string; farm_id?: string };
+      const result = data as { success: boolean; error?: string; farm_id?: string; invitation_id?: string };
 
       if (!result.success) {
         setStatus("error");
         setErrorMessage(result.error || "Failed to accept invitation");
         return;
+      }
+
+      // Send notification to the inviter (fire and forget)
+      if (result.invitation_id) {
+        supabase.functions.invoke("notify-invite-accepted", {
+          body: { invitationId: result.invitation_id },
+        }).catch((err) => {
+          console.error("Failed to send notification:", err);
+        });
       }
 
       setStatus("success");
