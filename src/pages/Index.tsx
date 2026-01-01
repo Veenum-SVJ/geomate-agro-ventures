@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Leaf, ArrowRight, Egg, Fish, Wheat, BarChart3, Users, Shield } from 'lucide-react';
+import { ArrowRight, Egg, Fish, Wheat, BarChart3, Users, Shield } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 const features = [
   {
@@ -53,11 +54,8 @@ const Index = () => {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
         <nav className="relative container mx-auto px-4 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <Leaf className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">FarmFlow NG</span>
+          <div className="flex items-center gap-2">
+            <img src={logo} alt="FarmSync NG" className="h-14 w-auto" />
           </div>
           <Button onClick={() => navigate('/auth')} variant="default">
             Get Started
@@ -144,11 +142,10 @@ const Index = () => {
       <footer className="py-8 border-t border-border">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Leaf className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-foreground">FarmFlow NG</span>
+            <img src={logo} alt="FarmSync NG" className="h-10 w-auto" />
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FarmFlow NG. All rights reserved.
+            © {new Date().getFullYear()} FarmSync NG. All rights reserved.
           </p>
         </div>
       </footer>
