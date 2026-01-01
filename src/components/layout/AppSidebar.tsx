@@ -31,17 +31,29 @@ import {
   ClipboardList,
   Users,
   UserCircle,
-  MessageSquare,
   Settings,
   LogOut,
   ChevronUp,
   FileText,
+  Globe,
+  Image,
+  MessageSquare,
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
 const menuItems = [
   {
-    group: 'Overview',
+    group: 'Website CMS',
+    items: [
+      { title: 'CMS Dashboard', icon: Globe, path: '/admin/cms' },
+      { title: 'Products', icon: Package, path: '/admin/cms/products' },
+      { title: 'Gallery', icon: Image, path: '/admin/cms/gallery' },
+      { title: 'Pages', icon: FileText, path: '/admin/cms/pages' },
+      { title: 'Inquiries', icon: MessageSquare, path: '/admin/cms/inquiries' },
+    ],
+  },
+  {
+    group: 'Farm Management',
     items: [
       { title: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     ],
@@ -91,7 +103,13 @@ export function AppSidebar() {
     <Sidebar className="border-r border-sidebar-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <img src={logo} alt="FarmSync NG" className="h-12 w-auto" />
+          <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-lg">G</span>
+          </div>
+          <div>
+            <span className="font-bold text-foreground">Geomate</span>
+            <span className="text-primary font-bold"> Agro</span>
+          </div>
         </div>
       </SidebarHeader>
 
@@ -159,7 +177,7 @@ export function AppSidebar() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={() => navigate('/settings')}>
+            <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
               <Settings className="mr-2 h-4 w-4" />
               Settings
             </DropdownMenuItem>
