@@ -1,4 +1,5 @@
-import { Egg, Fish, Wheat, Factory, TrendingUp, Users, ClipboardList, Package } from 'lucide-react';
+import { Egg, Fish, Wheat, Factory, Users, ClipboardList, Package } from 'lucide-react';
+import { NairaIcon } from '@/components/icons/NairaIcon';
 import { KPICard } from '@/components/dashboard/KPICard';
 import { ProfitChart } from '@/components/dashboard/ProfitChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -59,7 +60,7 @@ const Dashboard = () => {
           title="Total Profit"
           value="₦1.41M"
           subtitle="Last 6 months"
-          icon={TrendingUp}
+          icon={NairaIcon}
           trend={{ value: 23, isPositive: true }}
         />
         <KPICard
