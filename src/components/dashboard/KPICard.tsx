@@ -1,12 +1,15 @@
 import { LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { ComponentType, SVGProps } from 'react';
+
+type IconComponent = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
 interface KPICardProps {
   title: string;
   value: string | number;
   subtitle?: string;
-  icon: LucideIcon;
+  icon: IconComponent;
   trend?: {
     value: number;
     isPositive: boolean;
