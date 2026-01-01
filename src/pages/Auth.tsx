@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,8 @@ import { z } from 'zod';
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
 
+const SESSION_KEY = 'admin_session_timestamp';
+
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -22,10 +24,26 @@ const Auth = () => {
   
   const { signIn, signUp, signInWithGoogle, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  const state = location.state as { sessionExpired?: boolean; requireReauth?: boolean } | null;
+
+  useEffect(() => {
+    // Show session expired message
+    if (state?.sessionExpired) {
+      toast({
+        title: 'Session Expired',
+        description: 'Your session has expired. Please sign in again.',
+        variant: 'destructive',
+      });
+    }
+  }, [state, toast]);
 
   useEffect(() => {
     if (user) {
+      // Set session timestamp when user logs in
+      sessionStorage.setItem(SESSION_KEY, Date.now().toString());
       navigate('/admin/cms');
     }
   }, [user, navigate]);
