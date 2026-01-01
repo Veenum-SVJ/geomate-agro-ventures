@@ -8,6 +8,10 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Poultry from "./pages/Poultry";
+import Fishery from "./pages/Fishery";
+import Crops from "./pages/Crops";
+import Feedmill from "./pages/Feedmill";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +28,10 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/poultry" element={<Poultry />} />
+              <Route path="/fishery" element={<Fishery />} />
+              <Route path="/crops" element={<Crops />} />
+              <Route path="/feedmill" element={<Feedmill />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
