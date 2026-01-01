@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Accordion,
   AccordionContent,
@@ -5,6 +7,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Leaf, Droplets, Heart, Sun, Recycle, Shield } from 'lucide-react';
 
 const practices = [
@@ -12,99 +15,100 @@ const practices = [
     icon: Leaf,
     title: 'Soil Health Management',
     description: 'Our approach to maintaining healthy, productive soil.',
-    content: `At Geomate Agro Ventures, we understand that healthy soil is the foundation of sustainable 
-    agriculture. We employ several practices to maintain and improve soil health:
+    content: `At Geomate Agro Ventures, we understand that healthy soil is the foundation of sustainable agriculture. We employ several practices to maintain and improve soil health:
     
-    • Crop rotation to prevent nutrient depletion
-    • Cover cropping during off-seasons
-    • Minimal tillage to preserve soil structure
-    • Regular soil testing and targeted nutrient application
-    • Use of organic matter and compost to enhance fertility
-    
-    These practices ensure that our soil remains productive for generations to come while reducing 
-    our environmental footprint.`,
+• Crop rotation to prevent nutrient depletion
+• Cover cropping during off-seasons
+• Minimal tillage to preserve soil structure
+• Regular soil testing and targeted nutrient application
+• Use of organic matter and compost to enhance fertility
+
+These practices ensure that our soil remains productive for generations to come while reducing our environmental footprint.`,
   },
   {
     icon: Droplets,
     title: 'Water Conservation',
     description: 'Efficient water use through modern irrigation systems.',
-    content: `Water is a precious resource, and we take its conservation seriously. Our water management 
-    strategies include:
+    content: `Water is a precious resource, and we take its conservation seriously. Our water management strategies include:
     
-    • Drip irrigation systems that deliver water directly to plant roots
-    • Rainwater harvesting and storage facilities
-    • Scheduling irrigation based on weather data and soil moisture levels
-    • Mulching to reduce evaporation
-    • Regular maintenance of irrigation equipment to prevent leaks
-    
-    Through these methods, we significantly reduce water waste while ensuring our crops and 
-    animals receive the hydration they need.`,
+• Drip irrigation systems that deliver water directly to plant roots
+• Rainwater harvesting and storage facilities
+• Scheduling irrigation based on weather data and soil moisture levels
+• Mulching to reduce evaporation
+• Regular maintenance of irrigation equipment to prevent leaks
+
+Through these methods, we significantly reduce water waste while ensuring our crops and animals receive the hydration they need.`,
   },
   {
     icon: Heart,
     title: 'Animal Welfare',
     description: 'Ethical treatment and care for all our livestock.',
-    content: `We believe that happy, healthy animals produce the best products. Our animal welfare 
-    standards include:
+    content: `We believe that happy, healthy animals produce the best products. Our animal welfare standards include:
     
-    • Spacious, clean housing for all livestock
-    • Access to outdoor areas and natural light
-    • Balanced, nutritious diets without unnecessary antibiotics
-    • Regular veterinary check-ups and preventive care
-    • Humane handling practices at all times
-    
-    Our commitment to animal welfare is not just ethical—it results in healthier animals and 
-    higher quality products for our customers.`,
+• Spacious, clean housing for all livestock
+• Access to outdoor areas and natural light
+• Balanced, nutritious diets without unnecessary antibiotics
+• Regular veterinary check-ups and preventive care
+• Humane handling practices at all times
+
+Our commitment to animal welfare is not just ethical—it results in healthier animals and higher quality products for our customers.`,
   },
   {
     icon: Sun,
     title: 'Sustainable Energy',
     description: 'Utilizing renewable energy sources on the farm.',
-    content: `We are working towards reducing our carbon footprint through sustainable energy 
-    practices:
+    content: `We are working towards reducing our carbon footprint through sustainable energy practices:
     
-    • Solar panels for powering farm equipment and facilities
-    • Energy-efficient lighting and cooling systems
-    • Biogas production from farm waste
-    • Natural ventilation in animal housing where possible
-    
-    These initiatives help reduce our operating costs while contributing to a cleaner 
-    environment for our community.`,
+• Solar panels for powering farm equipment and facilities
+• Energy-efficient lighting and cooling systems
+• Biogas production from farm waste
+• Natural ventilation in animal housing where possible
+
+These initiatives help reduce our operating costs while contributing to a cleaner environment for our community.`,
   },
   {
     icon: Recycle,
     title: 'Waste Management',
     description: 'Converting farm waste into valuable resources.',
-    content: `Nothing goes to waste at Geomate Agro Ventures. Our waste management approach 
-    includes:
+    content: `Nothing goes to waste at Geomate Agro Ventures. Our waste management approach includes:
     
-    • Composting plant materials and manure for use as organic fertilizer
-    • Biogas production from organic waste
-    • Recycling packaging materials
-    • Proper disposal of any non-recyclable waste
-    
-    By turning waste into resources, we close the loop and create a more sustainable 
-    farming operation.`,
+• Composting plant materials and manure for use as organic fertilizer
+• Biogas production from organic waste
+• Recycling packaging materials
+• Proper disposal of any non-recyclable waste
+
+By turning waste into resources, we close the loop and create a more sustainable farming operation.`,
   },
   {
     icon: Shield,
     title: 'Integrated Pest Management',
     description: 'Minimizing chemical use through natural pest control.',
-    content: `We prioritize natural pest control methods to protect both our crops and the 
-    environment:
+    content: `We prioritize natural pest control methods to protect both our crops and the environment:
     
-    • Introduction of beneficial insects that prey on pests
-    • Companion planting to deter harmful insects
-    • Regular crop monitoring to catch infestations early
-    • Use of biological pesticides when intervention is needed
-    • Chemical pesticides only as a last resort and in minimal quantities
-    
-    This approach protects our ecosystem while producing healthier, safer food for 
-    our customers.`,
+• Introduction of beneficial insects that prey on pests
+• Companion planting to deter harmful insects
+• Regular crop monitoring to catch infestations early
+• Use of biological pesticides when intervention is needed
+• Chemical pesticides only as a last resort and in minimal quantities
+
+This approach protects our ecosystem while producing healthier, safer food for our customers.`,
   },
 ];
 
 export default function PracticesPage() {
+  const { data: pageContent, isLoading } = useQuery({
+    queryKey: ['public-page-practices'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_pages')
+        .select('content')
+        .eq('slug', 'practices')
+        .single();
+      if (error) throw error;
+      return data?.content;
+    },
+  });
+
   return (
     <div className="animate-fade-in">
       {/* Hero */}
@@ -125,12 +129,17 @@ export default function PracticesPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-muted-foreground text-lg">
-              At Geomate Agro Ventures, sustainability isn't just a buzzword—it's how we do 
-              business. We believe that responsible farming practices lead to better products, 
-              healthier communities, and a thriving environment. Here's an overview of our 
-              commitment to sustainable agriculture.
-            </p>
+            {isLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-4 w-full mx-auto" />
+                <Skeleton className="h-4 w-5/6 mx-auto" />
+                <Skeleton className="h-4 w-4/5 mx-auto" />
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-lg whitespace-pre-line">
+                {pageContent || `At Geomate Agro Ventures, sustainability isn't just a buzzword—it's how we do business. We believe that responsible farming practices lead to better products, healthier communities, and a thriving environment. Here's an overview of our commitment to sustainable agriculture.`}
+              </p>
+            )}
           </div>
         </div>
       </section>
