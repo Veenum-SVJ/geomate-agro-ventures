@@ -14,6 +14,115 @@ export type Database = {
   }
   public: {
     Tables: {
+      crop_production: {
+        Row: {
+          activity_type: string
+          cost: number | null
+          created_at: string
+          created_by: string | null
+          crop_name: string
+          farm_id: string
+          id: string
+          notes: string | null
+          plot_name: string | null
+          quantity: number | null
+          record_date: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity_type: string
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          crop_name: string
+          farm_id: string
+          id?: string
+          notes?: string | null
+          plot_name?: string | null
+          quantity?: number | null
+          record_date?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity_type?: string
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          crop_name?: string
+          farm_id?: string
+          id?: string
+          notes?: string | null
+          plot_name?: string | null
+          quantity?: number | null
+          record_date?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crop_production_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crop_sales: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          crop_name: string
+          customer_name: string | null
+          customer_phone: string | null
+          farm_id: string
+          id: string
+          notes: string | null
+          price_per_kg: number
+          quantity_kg: number
+          sale_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          crop_name: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          farm_id: string
+          id?: string
+          notes?: string | null
+          price_per_kg?: number
+          quantity_kg?: number
+          sale_date?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          crop_name?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          farm_id?: string
+          id?: string
+          notes?: string | null
+          price_per_kg?: number
+          quantity_kg?: number
+          sale_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crop_sales_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       farms: {
         Row: {
           created_at: string
@@ -43,6 +152,424 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      feedmill_ingredients: {
+        Row: {
+          cost_per_kg: number
+          created_at: string
+          created_by: string | null
+          farm_id: string
+          id: string
+          ingredient_name: string
+          notes: string | null
+          quantity_kg: number
+          record_date: string
+          supplier: string | null
+          updated_at: string
+        }
+        Insert: {
+          cost_per_kg?: number
+          created_at?: string
+          created_by?: string | null
+          farm_id: string
+          id?: string
+          ingredient_name: string
+          notes?: string | null
+          quantity_kg?: number
+          record_date?: string
+          supplier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cost_per_kg?: number
+          created_at?: string
+          created_by?: string | null
+          farm_id?: string
+          id?: string
+          ingredient_name?: string
+          notes?: string | null
+          quantity_kg?: number
+          record_date?: string
+          supplier?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedmill_ingredients_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedmill_power: {
+        Row: {
+          cost: number
+          created_at: string
+          created_by: string | null
+          farm_id: string
+          id: string
+          notes: string | null
+          power_type: string
+          quantity: number | null
+          record_date: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          cost?: number
+          created_at?: string
+          created_by?: string | null
+          farm_id: string
+          id?: string
+          notes?: string | null
+          power_type: string
+          quantity?: number | null
+          record_date?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          created_by?: string | null
+          farm_id?: string
+          id?: string
+          notes?: string | null
+          power_type?: string
+          quantity?: number | null
+          record_date?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedmill_power_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedmill_production: {
+        Row: {
+          bags_produced: number | null
+          created_at: string
+          created_by: string | null
+          farm_id: string
+          feed_type: string
+          id: string
+          notes: string | null
+          production_cost: number | null
+          quantity_produced_kg: number
+          record_date: string
+          updated_at: string
+        }
+        Insert: {
+          bags_produced?: number | null
+          created_at?: string
+          created_by?: string | null
+          farm_id: string
+          feed_type: string
+          id?: string
+          notes?: string | null
+          production_cost?: number | null
+          quantity_produced_kg?: number
+          record_date?: string
+          updated_at?: string
+        }
+        Update: {
+          bags_produced?: number | null
+          created_at?: string
+          created_by?: string | null
+          farm_id?: string
+          feed_type?: string
+          id?: string
+          notes?: string | null
+          production_cost?: number | null
+          quantity_produced_kg?: number
+          record_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedmill_production_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fishery_production: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          farm_id: string
+          feed_cost: number | null
+          feed_given_kg: number
+          fish_species: string | null
+          id: string
+          notes: string | null
+          oxygen_level: number | null
+          pond_name: string
+          record_date: string
+          stock_count: number
+          updated_at: string
+          water_ph: number | null
+          water_temperature: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          farm_id: string
+          feed_cost?: number | null
+          feed_given_kg?: number
+          fish_species?: string | null
+          id?: string
+          notes?: string | null
+          oxygen_level?: number | null
+          pond_name: string
+          record_date?: string
+          stock_count?: number
+          updated_at?: string
+          water_ph?: number | null
+          water_temperature?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          farm_id?: string
+          feed_cost?: number | null
+          feed_given_kg?: number
+          fish_species?: string | null
+          id?: string
+          notes?: string | null
+          oxygen_level?: number | null
+          pond_name?: string
+          record_date?: string
+          stock_count?: number
+          updated_at?: string
+          water_ph?: number | null
+          water_temperature?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fishery_production_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fishery_sales: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          farm_id: string
+          fish_species: string
+          id: string
+          notes: string | null
+          price_per_kg: number
+          quantity_kg: number
+          sale_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          farm_id: string
+          fish_species: string
+          id?: string
+          notes?: string | null
+          price_per_kg?: number
+          quantity_kg?: number
+          sale_date?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          farm_id?: string
+          fish_species?: string
+          id?: string
+          notes?: string | null
+          price_per_kg?: number
+          quantity_kg?: number
+          sale_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fishery_sales_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poultry_production: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          egg_count: number
+          farm_id: string
+          health_notes: string | null
+          hen_count: number
+          id: string
+          mortality: number
+          record_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          egg_count?: number
+          farm_id: string
+          health_notes?: string | null
+          hen_count?: number
+          id?: string
+          mortality?: number
+          record_date?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          egg_count?: number
+          farm_id?: string
+          health_notes?: string | null
+          hen_count?: number
+          id?: string
+          mortality?: number
+          record_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poultry_production_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poultry_resources: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          farm_id: string
+          feed_consumed_kg: number
+          feed_cost: number | null
+          id: string
+          medication_cost: number | null
+          medications: string | null
+          record_date: string
+          updated_at: string
+          water_consumed_liters: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          farm_id: string
+          feed_consumed_kg?: number
+          feed_cost?: number | null
+          id?: string
+          medication_cost?: number | null
+          medications?: string | null
+          record_date?: string
+          updated_at?: string
+          water_consumed_liters?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          farm_id?: string
+          feed_consumed_kg?: number
+          feed_cost?: number | null
+          id?: string
+          medication_cost?: number | null
+          medications?: string | null
+          record_date?: string
+          updated_at?: string
+          water_consumed_liters?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poultry_resources_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poultry_sales: {
+        Row: {
+          bird_price_each: number
+          birds_sold: number
+          created_at: string
+          created_by: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          egg_price_per_crate: number
+          eggs_sold: number
+          farm_id: string
+          id: string
+          notes: string | null
+          sale_date: string
+          updated_at: string
+        }
+        Insert: {
+          bird_price_each?: number
+          birds_sold?: number
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          egg_price_per_crate?: number
+          eggs_sold?: number
+          farm_id: string
+          id?: string
+          notes?: string | null
+          sale_date?: string
+          updated_at?: string
+        }
+        Update: {
+          bird_price_each?: number
+          birds_sold?: number
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          egg_price_per_crate?: number
+          eggs_sold?: number
+          farm_id?: string
+          id?: string
+          notes?: string | null
+          sale_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poultry_sales_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
