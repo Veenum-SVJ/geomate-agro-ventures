@@ -40,6 +40,7 @@ import {
   Image,
   MessageSquare,
   Home,
+  Settings,
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
@@ -164,7 +165,7 @@ export function AppSidebar() {
               isActive={location.pathname === '/admin/settings'}
               onClick={() => navigate('/admin/settings')}
             >
-              <Home className="h-4 w-4" />
+              <Settings className="h-4 w-4" />
               <span>Settings</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
