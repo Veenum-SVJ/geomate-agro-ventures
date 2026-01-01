@@ -31,13 +31,13 @@ import {
   ClipboardList,
   Users,
   UserCircle,
-  Settings,
   LogOut,
   ChevronUp,
   FileText,
   Globe,
   Image,
   MessageSquare,
+  Home,
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
@@ -148,7 +148,7 @@ export function AppSidebar() {
               isActive={location.pathname === '/admin/settings'}
               onClick={() => navigate('/admin/settings')}
             >
-              <Settings className="h-4 w-4" />
+              <Home className="h-4 w-4" />
               <span>Settings</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -177,9 +177,9 @@ export function AppSidebar() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
+            <DropdownMenuItem onClick={() => navigate('/')}>
+              <Home className="mr-2 h-4 w-4" />
+              Go back to homepage
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
