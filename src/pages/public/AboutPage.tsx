@@ -1,4 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Target, Eye, Heart, Users } from 'lucide-react';
 
 const values = [
@@ -24,7 +27,28 @@ const values = [
   },
 ];
 
+const defaultContent = `Geomate Agro Ventures was founded in Ibadan, Nigeria, with a simple but powerful vision: to bridge the gap between sustainable farming practices and the growing demand for high-quality agricultural products.
+
+What started as a small family operation has grown into a thriving agricultural enterprise. Over the years, we have invested in modern farming techniques while staying true to traditional values of hard work, integrity, and respect for the land.
+
+Today, we serve both local consumers and business partners across Nigeria, providing fresh poultry products, organically grown crops, and premium cattle products—all produced with care and commitment to excellence.`;
+
 export default function AboutPage() {
+  const { data: pageContent, isLoading } = useQuery({
+    queryKey: ['public-page-about'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_pages')
+        .select('content')
+        .eq('slug', 'about')
+        .single();
+      if (error) throw error;
+      return data?.content || defaultContent;
+    },
+  });
+
+  const content = pageContent || defaultContent;
+
   return (
     <div className="animate-fade-in">
       {/* Hero */}
@@ -54,21 +78,19 @@ export default function AboutPage() {
             </div>
             <div>
               <h2 className="text-3xl font-bold text-foreground mb-6">Our Story</h2>
-              <p className="text-muted-foreground mb-4">
-                Geomate Agro Ventures was founded in Ibadan, Nigeria, with a simple but powerful vision: 
-                to bridge the gap between sustainable farming practices and the growing demand for 
-                high-quality agricultural products.
-              </p>
-              <p className="text-muted-foreground mb-4">
-                What started as a small family operation has grown into a thriving agricultural 
-                enterprise. Over the years, we have invested in modern farming techniques while 
-                staying true to traditional values of hard work, integrity, and respect for the land.
-              </p>
-              <p className="text-muted-foreground">
-                Today, we serve both local consumers and business partners across Nigeria, 
-                providing fresh poultry products, organically grown crops, and premium cattle 
-                products—all produced with care and commitment to excellence.
-              </p>
+              {isLoading ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </div>
+              ) : (
+                <div className="text-muted-foreground space-y-4 whitespace-pre-line">
+                  {content}
+                </div>
+              )}
             </div>
           </div>
         </div>
