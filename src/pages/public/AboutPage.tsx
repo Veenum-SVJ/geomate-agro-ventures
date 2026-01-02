@@ -1,50 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Target, Eye, Heart, Users, Award, Sprout } from 'lucide-react';
+import { Target, Eye, Heart, Users, Award, Sprout, Star, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { LucideIcon } from 'lucide-react';
 
-const values = [
-  {
-    icon: Target,
-    title: 'Quality First',
-    description: 'We never compromise on the quality of our products, ensuring only the best reaches our customers.',
-    color: 'from-emerald-500 to-green-600',
-  },
-  {
-    icon: Eye,
-    title: 'Transparency',
-    description: 'We believe in open communication and honest practices with all our stakeholders.',
-    color: 'from-amber-500 to-yellow-600',
-  },
-  {
-    icon: Heart,
-    title: 'Sustainability',
-    description: 'Our farming methods prioritize environmental health and long-term sustainability.',
-    color: 'from-green-600 to-emerald-700',
-  },
-  {
-    icon: Users,
-    title: 'Community',
-    description: 'We are committed to supporting local communities and contributing to their growth.',
-    color: 'from-stone-500 to-stone-700',
-  },
-];
-
-const milestones = [
-  { year: '2015', title: 'The Beginning', description: 'Started as a small family poultry farm in Ibadan' },
-  { year: '2017', title: 'Expansion', description: 'Added crop cultivation and expanded to 50 hectares' },
-  { year: '2019', title: 'Cattle Division', description: 'Introduced cattle rearing and dairy production' },
-  { year: '2022', title: 'Modernization', description: 'Implemented sustainable practices and modern equipment' },
-  { year: '2024', title: 'Today', description: 'Serving thousands of customers across Nigeria' },
-];
-
-const stats = [
-  { number: '500+', label: 'Hectares of Farmland' },
-  { number: '10K+', label: 'Happy Customers' },
-  { number: '50+', label: 'Team Members' },
-  { number: '9+', label: 'Years of Excellence' },
-];
+const iconMap: Record<string, LucideIcon> = {
+  Target, Eye, Heart, Users, Award, Sprout, Star, Shield
+};
 
 const defaultContent = `Geomate Agro Ventures was founded in Ibadan, Nigeria, with a simple but powerful vision: to bridge the gap between sustainable farming practices and the growing demand for high-quality agricultural products.
 
@@ -53,7 +16,7 @@ What started as a small family operation has grown into a thriving agricultural 
 Today, we serve both local consumers and business partners across Nigeria, providing fresh poultry products, organically grown crops, and premium cattle products—all produced with care and commitment to excellence.`;
 
 export default function AboutPage() {
-  const { data: pageContent, isLoading } = useQuery({
+  const { data: pageContent, isLoading: loadingPage } = useQuery({
     queryKey: ['public-page-about'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -66,7 +29,57 @@ export default function AboutPage() {
     },
   });
 
+  const { data: settings } = useQuery({
+    queryKey: ['public-settings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_settings')
+        .select('*');
+      if (error) throw error;
+      const map: Record<string, any> = {};
+      data?.forEach((s: any) => {
+        map[s.key] = s.value;
+      });
+      return map;
+    },
+  });
+
+  const { data: values } = useQuery({
+    queryKey: ['public-values'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_values')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: milestones } = useQuery({
+    queryKey: ['public-milestones'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_milestones')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const content = pageContent || defaultContent;
+  const stats = settings?.stats || [
+    { number: '500+', label: 'Hectares of Farmland' },
+    { number: '10K+', label: 'Happy Customers' },
+    { number: '50+', label: 'Team Members' },
+    { number: '9+', label: 'Years of Excellence' },
+  ];
+  const mission = settings?.mission || { title: 'Our Mission', content: 'To provide high-quality, sustainably produced agricultural products that meet the needs of our customers while promoting environmental stewardship and supporting local communities.' };
+  const vision = settings?.vision || { title: 'Our Vision', content: "To become Nigeria's leading sustainable agriculture enterprise, recognized for innovation, quality, and positive impact on both people and the planet." };
+  const hero = settings?.hero || { title: 'About Geomate', subtitle: 'From humble beginnings to becoming a trusted name in Nigerian agriculture', image_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop' };
 
   return (
     <div className="overflow-hidden">
@@ -75,7 +88,7 @@ export default function AboutPage() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop)',
+            backgroundImage: `url(${hero.image_url})`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
@@ -91,10 +104,10 @@ export default function AboutPage() {
             Our Journey
           </span>
           <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6">
-            About Geomate
+            {hero.title}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            From humble beginnings to becoming a trusted name in Nigerian agriculture
+            {hero.subtitle}
           </p>
         </motion.div>
 
@@ -114,7 +127,7 @@ export default function AboutPage() {
       <section className="py-8 bg-primary">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
+            {stats.map((stat: any, index: number) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 20 }}
@@ -172,7 +185,7 @@ export default function AboutPage() {
               className="lg:col-span-3 space-y-6"
             >
               <h2 className="text-4xl font-bold text-foreground">Our Story</h2>
-              {isLoading ? (
+              {loadingPage ? (
                 <div className="space-y-3">
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
@@ -208,9 +221,9 @@ export default function AboutPage() {
             <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border hidden md:block" />
             
             <div className="space-y-12">
-              {milestones.map((milestone, index) => (
+              {milestones?.map((milestone: any, index: number) => (
                 <motion.div
-                  key={milestone.year}
+                  key={milestone.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -247,12 +260,9 @@ export default function AboutPage() {
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
               <Target className="h-12 w-12 text-primary mb-6" />
-              <h3 className="text-2xl font-bold text-foreground mb-4">Our Mission</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-4">{mission.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                To provide high-quality, sustainably produced agricultural products that meet 
-                the needs of our customers while promoting environmental stewardship and 
-                supporting local communities. We strive to be a trusted partner for individuals 
-                and businesses seeking reliable, fresh, and ethically sourced farm products.
+                {mission.content}
               </p>
             </motion.div>
 
@@ -265,12 +275,9 @@ export default function AboutPage() {
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
               <Eye className="h-12 w-12 text-accent-foreground mb-6" />
-              <h3 className="text-2xl font-bold text-foreground mb-4">Our Vision</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-4">{vision.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                To become Nigeria's leading sustainable agriculture enterprise, recognized for 
-                innovation, quality, and positive impact on both people and the planet. We 
-                envision a future where modern farming practices and traditional wisdom come 
-                together to create a more food-secure nation.
+                {vision.content}
               </p>
             </motion.div>
           </div>
@@ -293,24 +300,27 @@ export default function AboutPage() {
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
-                className="group relative bg-background rounded-2xl p-6 shadow-sm border border-border overflow-hidden"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${value.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-                <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${value.color} flex items-center justify-center mb-5 shadow-lg`}>
-                  <value.icon className="h-7 w-7 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{value.title}</h3>
-                <p className="text-sm text-muted-foreground">{value.description}</p>
-              </motion.div>
-            ))}
+            {values?.map((value: any, index: number) => {
+              const IconComponent = iconMap[value.icon] || Target;
+              return (
+                <motion.div
+                  key={value.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ y: -8 }}
+                  className="group relative bg-background rounded-2xl p-6 shadow-sm border border-border overflow-hidden"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${value.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                  <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${value.color} flex items-center justify-center mb-5 shadow-lg`}>
+                    <IconComponent className="h-7 w-7 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">{value.title}</h3>
+                  <p className="text-sm text-muted-foreground">{value.description}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

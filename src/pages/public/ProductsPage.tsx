@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Egg, Wheat, Beef, ArrowRight, Package } from 'lucide-react';
+import { Egg, Wheat, Beef, ArrowRight, Package, Fish, Milk, Apple } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LucideIcon } from 'lucide-react';
 
 type Product = {
   id: string;
@@ -15,43 +16,43 @@ type Product = {
   stock_status: string;
 };
 
+type Category = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  image_url: string | null;
+  color: string;
+  icon: string;
+};
+
+const iconMap: Record<string, LucideIcon> = {
+  Egg, Wheat, Beef, Fish, Milk, Apple, Package
+};
+
 const stockStatusConfig: Record<string, { color: string; label: string }> = {
   in_stock: { color: 'bg-success text-success-foreground', label: 'In Stock' },
   low_stock: { color: 'bg-warning text-warning-foreground', label: 'Low Stock' },
   out_of_stock: { color: 'bg-destructive text-destructive-foreground', label: 'Out of Stock' },
 };
 
-const categories = [
-  {
-    id: 'poultry',
-    name: 'Poultry',
-    icon: Egg,
-    description: 'Fresh eggs and quality chicken products',
-    image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&h=600&fit=crop',
-    color: 'from-amber-600 to-orange-700',
-  },
-  {
-    id: 'crops',
-    name: 'Crops',
-    icon: Wheat,
-    description: 'Organically grown vegetables and grains',
-    image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&h=600&fit=crop',
-    color: 'from-green-600 to-emerald-700',
-  },
-  {
-    id: 'cattle',
-    name: 'Cattle',
-    icon: Beef,
-    description: 'Premium beef and dairy products',
-    image: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&h=600&fit=crop',
-    color: 'from-stone-600 to-stone-800',
-  },
-];
-
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  const { data: products, isLoading } = useQuery({
+  const { data: categories, isLoading: loadingCategories } = useQuery({
+    queryKey: ['public-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      if (error) throw error;
+      return data as Category[];
+    },
+  });
+
+  const { data: products, isLoading: loadingProducts } = useQuery({
     queryKey: ['public-products'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -64,13 +65,10 @@ export default function ProductsPage() {
     },
   });
 
-  const productsByCategory = {
-    poultry: products?.filter((p) => p.category === 'poultry') || [],
-    crops: products?.filter((p) => p.category === 'crops') || [],
-    cattle: products?.filter((p) => p.category === 'cattle') || [],
-  };
-
-  const activeCategoryData = activeCategory ? categories.find(c => c.id === activeCategory) : null;
+  const activeCategoryData = activeCategory ? categories?.find(c => c.slug === activeCategory) : null;
+  const filteredProducts = activeCategory 
+    ? products?.filter((p) => p.category === activeCategory) || []
+    : [];
 
   return (
     <div className="overflow-hidden">
@@ -99,40 +97,51 @@ export default function ProductsPage() {
       {/* Category Selector - Large Cards */}
       <section className="pb-8">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-6">
-            {categories.map((category, index) => (
-              <motion.button
-                key={category.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
-                className={`group relative overflow-hidden rounded-2xl aspect-[4/3] text-left transition-all duration-500 ${
-                  activeCategory === category.id ? 'ring-4 ring-primary ring-offset-4 ring-offset-background' : ''
-                }`}
-              >
-                <img
-                  src={category.image}
-                  alt={category.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-70 group-hover:opacity-80 transition-opacity`} />
-                <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <category.icon className="h-6 w-6 text-white" />
+          {loadingCategories ? (
+            <div className="grid md:grid-cols-3 gap-6">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="aspect-[4/3] rounded-2xl" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-6">
+              {categories?.map((category, index) => {
+                const IconComponent = iconMap[category.icon] || Package;
+                return (
+                  <motion.button
+                    key={category.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    onClick={() => setActiveCategory(activeCategory === category.slug ? null : category.slug)}
+                    className={`group relative overflow-hidden rounded-2xl aspect-[4/3] text-left transition-all duration-500 ${
+                      activeCategory === category.slug ? 'ring-4 ring-primary ring-offset-4 ring-offset-background' : ''
+                    }`}
+                  >
+                    <img
+                      src={category.image_url || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop'}
+                      alt={category.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-70 group-hover:opacity-80 transition-opacity`} />
+                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                          <IconComponent className="h-6 w-6 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-white">{category.name}</h3>
+                      </div>
+                      <p className="text-white/80">{category.description}</p>
+                      <div className="flex items-center gap-2 mt-4 text-white font-medium">
+                        <span>View Products</span>
+                        <ArrowRight className={`h-4 w-4 transition-transform ${activeCategory === category.slug ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
+                      </div>
                     </div>
-                    <h3 className="text-2xl font-bold text-white">{category.name}</h3>
-                  </div>
-                  <p className="text-white/80">{category.description}</p>
-                  <div className="flex items-center gap-2 mt-4 text-white font-medium">
-                    <span>View Products</span>
-                    <ArrowRight className={`h-4 w-4 transition-transform ${activeCategory === category.id ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
-                  </div>
-                </div>
-              </motion.button>
-            ))}
-          </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
@@ -150,15 +159,20 @@ export default function ProductsPage() {
               <div className="flex items-center gap-4 mb-8">
                 {activeCategoryData && (
                   <>
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${activeCategoryData.color} flex items-center justify-center`}>
-                      <activeCategoryData.icon className="h-5 w-5 text-white" />
-                    </div>
+                    {(() => {
+                      const IconComponent = iconMap[activeCategoryData.icon] || Package;
+                      return (
+                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${activeCategoryData.color} flex items-center justify-center`}>
+                          <IconComponent className="h-5 w-5 text-white" />
+                        </div>
+                      );
+                    })()}
                     <h2 className="text-2xl font-bold text-foreground">{activeCategoryData.name} Products</h2>
                   </>
                 )}
               </div>
 
-              {isLoading ? (
+              {loadingProducts ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[...Array(4)].map((_, i) => (
                     <div key={i} className="space-y-4">
@@ -168,9 +182,9 @@ export default function ProductsPage() {
                     </div>
                   ))}
                 </div>
-              ) : productsByCategory[activeCategory as keyof typeof productsByCategory].length > 0 ? (
+              ) : filteredProducts.length > 0 ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {productsByCategory[activeCategory as keyof typeof productsByCategory].map((product, index) => (
+                  {filteredProducts.map((product, index) => (
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -180,7 +194,7 @@ export default function ProductsPage() {
                     >
                       <div className="relative aspect-[4/3] overflow-hidden">
                         <img
-                          src={product.image_url || activeCategoryData?.image}
+                          src={product.image_url || activeCategoryData?.image_url || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop'}
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
