@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { ImageUpload } from '@/components/cms/ImageUpload';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 
 type Product = {
@@ -19,6 +20,7 @@ type Product = {
   description: string | null;
   category: string;
   stock_status: string;
+  image_url: string | null;
   is_active: boolean;
 };
 
@@ -44,6 +46,7 @@ export default function CMSProducts() {
     description: '',
     category: 'poultry',
     stock_status: 'in_stock',
+    image_url: '',
   });
 
   const { data: products, isLoading } = useQuery({
@@ -69,6 +72,7 @@ export default function CMSProducts() {
             description: data.description || null,
             category: data.category,
             stock_status: data.stock_status,
+            image_url: data.image_url || null,
           })
           .eq('id', data.id);
         if (error) throw error;
@@ -78,6 +82,7 @@ export default function CMSProducts() {
           description: data.description || null,
           category: data.category,
           stock_status: data.stock_status,
+          image_url: data.image_url || null,
         }]);
         if (error) throw error;
       }
@@ -108,7 +113,7 @@ export default function CMSProducts() {
 
   const openAddDialog = () => {
     setEditingProduct(null);
-    setFormData({ name: '', description: '', category: 'poultry', stock_status: 'in_stock' });
+    setFormData({ name: '', description: '', category: 'poultry', stock_status: 'in_stock', image_url: '' });
     setDialogOpen(true);
   };
 
@@ -119,6 +124,7 @@ export default function CMSProducts() {
       description: product.description || '',
       category: product.category,
       stock_status: product.stock_status,
+      image_url: product.image_url || '',
     });
     setDialogOpen(true);
   };
@@ -126,7 +132,7 @@ export default function CMSProducts() {
   const closeDialog = () => {
     setDialogOpen(false);
     setEditingProduct(null);
-    setFormData({ name: '', description: '', category: 'poultry', stock_status: 'in_stock' });
+    setFormData({ name: '', description: '', category: 'poultry', stock_status: 'in_stock', image_url: '' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -169,6 +175,14 @@ export default function CMSProducts() {
                   rows={3}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Product Image</Label>
+                <ImageUpload
+                  value={formData.image_url}
+                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  folder="products"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
