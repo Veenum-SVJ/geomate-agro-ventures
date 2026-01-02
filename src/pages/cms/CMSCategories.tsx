@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { ImageUpload } from '@/components/cms/ImageUpload';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 
 type Category = {
@@ -187,17 +188,12 @@ export default function CMSCategories() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Image URL</Label>
-                <Input
+                <Label>Image</Label>
+                <ImageUpload
                   value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
+                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  folder="categories"
                 />
-                {formData.image_url && (
-                  <div className="mt-2 rounded-lg overflow-hidden h-24 bg-muted">
-                    <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
-                  </div>
-                )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
