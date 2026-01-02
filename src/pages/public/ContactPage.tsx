@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +19,30 @@ export default function ContactPage() {
     subject: '',
     message: '',
   });
+
+  const { data: settings } = useQuery({
+    queryKey: ['public-settings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_settings')
+        .select('*');
+      if (error) throw error;
+      const map: Record<string, any> = {};
+      data?.forEach((s: any) => {
+        map[s.key] = s.value;
+      });
+      return map;
+    },
+  });
+
+  const contact = settings?.contact || {
+    address: 'Geomate Agro Ventures\nIbadan, Oyo State, Nigeria',
+    phone: '+234 801 234 5678',
+    email: 'info@geomateagro.com',
+    whatsapp: '+2348012345678',
+    business_hours: 'Mon - Fri: 8AM - 6PM\nSat: 9AM - 4PM\nSun: Closed',
+    maps_url: 'https://maps.google.com/?q=Ibadan,Nigeria',
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,25 +83,25 @@ export default function ContactPage() {
     {
       icon: MapPin,
       title: 'Visit Us',
-      content: 'Geomate Agro Ventures\nIbadan, Oyo State, Nigeria',
-      action: { label: 'Get Directions', href: 'https://maps.google.com/?q=Ibadan,Nigeria' },
+      content: contact.address,
+      action: { label: 'Get Directions', href: contact.maps_url },
     },
     {
       icon: Phone,
       title: 'Call Us',
-      content: '+234 801 234 5678',
-      action: { label: 'Call Now', href: 'tel:+2348012345678' },
+      content: contact.phone,
+      action: { label: 'Call Now', href: `tel:${contact.phone.replace(/\s+/g, '')}` },
     },
     {
       icon: Mail,
       title: 'Email Us',
-      content: 'info@geomateagro.com',
-      action: { label: 'Send Email', href: 'mailto:info@geomateagro.com' },
+      content: contact.email,
+      action: { label: 'Send Email', href: `mailto:${contact.email}` },
     },
     {
       icon: Clock,
       title: 'Business Hours',
-      content: 'Mon - Fri: 8AM - 6PM\nSat: 9AM - 4PM\nSun: Closed',
+      content: contact.business_hours,
     },
   ];
 
@@ -291,7 +316,7 @@ export default function ContactPage() {
               Send us a message directly on WhatsApp for faster responses. We're available during business hours.
             </p>
             <a
-              href="https://wa.me/2348012345678"
+              href={`https://wa.me/${contact.whatsapp.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-green-700 font-semibold hover:bg-white/90 transition-colors shadow-lg"
