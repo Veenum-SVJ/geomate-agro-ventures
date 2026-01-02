@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { PreviewDrawer } from '@/components/cms/PreviewDrawer';
 import { Loader2, Save, Phone, Mail, MapPin, Clock, MessageCircle, Target, Eye } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -102,9 +103,19 @@ export default function CMSSettings() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Site Settings</h1>
-        <p className="text-muted-foreground mt-1">Manage contact info, stats, and general content</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Site Settings</h1>
+          <p className="text-muted-foreground mt-1">Manage contact info, stats, and general content</p>
+        </div>
+        <PreviewDrawer
+          pages={[
+            { label: 'Home', path: '/' },
+            { label: 'About', path: '/about' },
+            { label: 'Contact', path: '/contact' },
+            { label: 'Practices', path: '/practices' },
+          ]}
+        />
       </div>
 
       <Tabs defaultValue="contact" className="space-y-6">

@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { PreviewDrawer } from '@/components/cms/PreviewDrawer';
 import { Plus, Pencil, Trash2, Loader2, Calendar } from 'lucide-react';
 
 type Milestone = {
@@ -121,13 +122,17 @@ export default function CMSMilestones() {
           <h1 className="text-3xl font-bold text-foreground">Timeline Milestones</h1>
           <p className="text-muted-foreground mt-1">Manage the company history timeline on the About page</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openAddDialog}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Milestone
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <PreviewDrawer
+            pages={[{ label: 'About', path: '/about' }]}
+          />
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={openAddDialog}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Milestone
+              </Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{editingMilestone ? 'Edit Milestone' : 'Add Milestone'}</DialogTitle>
@@ -170,7 +175,8 @@ export default function CMSMilestones() {
               </DialogFooter>
             </form>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {isLoading ? (

@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { PreviewDrawer } from '@/components/cms/PreviewDrawer';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 
 type Practice = {
@@ -149,13 +150,17 @@ export default function CMSPractices() {
           <h1 className="text-3xl font-bold text-foreground">Farming Practices</h1>
           <p className="text-muted-foreground mt-1">Manage sustainability practices displayed on the Practices page</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openAddDialog}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Practice
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <PreviewDrawer
+            pages={[{ label: 'Practices', path: '/practices' }]}
+          />
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={openAddDialog}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Practice
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>{editingPractice ? 'Edit Practice' : 'Add Practice'}</DialogTitle>
@@ -236,7 +241,8 @@ export default function CMSPractices() {
               </DialogFooter>
             </form>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {isLoading ? (
