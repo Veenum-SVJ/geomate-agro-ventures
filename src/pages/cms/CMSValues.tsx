@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { PreviewDrawer } from '@/components/cms/PreviewDrawer';
 import { Plus, Pencil, Trash2, Loader2, GripVertical } from 'lucide-react';
 
 type Value = {
@@ -137,13 +138,17 @@ export default function CMSValues() {
           <h1 className="text-3xl font-bold text-foreground">Core Values</h1>
           <p className="text-muted-foreground mt-1">Manage the values displayed on the About page</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openAddDialog}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Value
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <PreviewDrawer
+            pages={[{ label: 'About', path: '/about' }]}
+          />
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={openAddDialog}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Value
+              </Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{editingValue ? 'Edit Value' : 'Add Value'}</DialogTitle>
@@ -209,7 +214,8 @@ export default function CMSValues() {
               </DialogFooter>
             </form>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {isLoading ? (
