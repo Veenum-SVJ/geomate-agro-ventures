@@ -25,6 +25,11 @@ import CMSProducts from "./pages/cms/CMSProducts";
 import CMSGallery from "./pages/cms/CMSGallery";
 import CMSPages from "./pages/cms/CMSPages";
 import CMSInquiries from "./pages/cms/CMSInquiries";
+import CMSSettings from "./pages/cms/CMSSettings";
+import CMSValues from "./pages/cms/CMSValues";
+import CMSMilestones from "./pages/cms/CMSMilestones";
+import CMSPractices from "./pages/cms/CMSPractices";
+import CMSCategories from "./pages/cms/CMSCategories";
 
 // Admin pages (FarmFlow)
 import Dashboard from "./pages/Dashboard";
@@ -72,6 +77,11 @@ const App = () => (
               <Route path="/admin/cms/products" element={<CMSProducts />} />
               <Route path="/admin/cms/gallery" element={<CMSGallery />} />
               <Route path="/admin/cms/pages" element={<CMSPages />} />
+              <Route path="/admin/cms/settings" element={<CMSSettings />} />
+              <Route path="/admin/cms/values" element={<CMSValues />} />
+              <Route path="/admin/cms/milestones" element={<CMSMilestones />} />
+              <Route path="/admin/cms/practices" element={<CMSPractices />} />
+              <Route path="/admin/cms/categories" element={<CMSCategories />} />
               <Route path="/admin/cms/inquiries" element={<CMSInquiries />} />
               
               {/* FarmFlow */}
