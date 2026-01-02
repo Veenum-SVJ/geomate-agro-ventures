@@ -66,9 +66,14 @@ const menuItems: MenuGroup[] = [
     requiredRoles: ['admin'], // Only admins can access CMS
     items: [
       { title: 'CMS Dashboard', icon: Globe, path: '/admin/cms' },
+      { title: 'Site Settings', icon: Settings, path: '/admin/cms/settings' },
       { title: 'Products', icon: Package, path: '/admin/cms/products' },
+      { title: 'Categories', icon: Package, path: '/admin/cms/categories' },
       { title: 'Gallery', icon: Image, path: '/admin/cms/gallery' },
       { title: 'Pages', icon: FileText, path: '/admin/cms/pages' },
+      { title: 'Core Values', icon: FileText, path: '/admin/cms/values' },
+      { title: 'Milestones', icon: FileText, path: '/admin/cms/milestones' },
+      { title: 'Practices', icon: FileText, path: '/admin/cms/practices' },
       { title: 'Inquiries', icon: MessageSquare, path: '/admin/cms/inquiries' },
     ],
   },
