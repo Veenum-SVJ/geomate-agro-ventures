@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { AppLayout } from "@/components/layout/AppLayout";
 
@@ -18,6 +19,7 @@ import ContactPage from "./pages/public/ContactPage";
 // Auth
 import Auth from "./pages/Auth";
 import AcceptInvite from "./pages/AcceptInvite";
+import ResetPassword from "./pages/ResetPassword";
 
 // CMS pages
 import CMSDashboard from "./pages/cms/CMSDashboard";
@@ -53,6 +55,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <ErrorBoundary>
         <BrowserRouter>
           <Routes>
             {/* Public Website */}
@@ -69,6 +72,7 @@ const App = () => (
             <Route path="/admin" element={<Auth />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/accept-invite" element={<AcceptInvite />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Admin CMS & FarmFlow */}
             <Route element={<AppLayout />}>
@@ -101,6 +105,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        </ErrorBoundary>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>

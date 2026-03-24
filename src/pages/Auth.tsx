@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Lock } from 'lucide-react';
+import { Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 
 const emailSchema = z.string().email('Please enter a valid email address');
@@ -19,6 +20,10 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetEmailError, setResetEmailError] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
   
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
@@ -85,6 +90,41 @@ const Auth = () => {
           : error.message,
         variant: 'destructive',
       });
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetEmailError('');
+
+    try {
+      emailSchema.parse(resetEmail);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setResetEmailError(err.errors[0].message);
+      }
+      return;
+    }
+
+    setIsResetting(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setIsResetting(false);
+
+    if (error) {
+      toast({
+        title: 'Reset failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Check your email',
+        description: 'A password reset link has been sent to your email address.',
+      });
+      setShowForgotPassword(false);
+      setResetEmail('');
     }
   };
 
@@ -165,11 +205,76 @@ const Auth = () => {
               </Button>
             </form>
 
-            <p className="text-center text-sm text-muted-foreground mt-6">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="w-full text-center text-sm text-primary hover:underline mt-4"
+            >
+              Forgot your password?
+            </button>
+
+            <p className="text-center text-sm text-muted-foreground mt-4">
               New team members can join via invitation only.
             </p>
           </CardContent>
         </Card>
+
+        {/* Forgot Password Modal */}
+        {showForgotPassword && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <Card className="w-full max-w-md border-border/50 shadow-xl">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setShowForgotPassword(false); setResetEmailError(''); }}
+                    className="text-muted-foreground hover:text-foreground"
+                    aria-label="Go back to sign in"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+                  <div>
+                    <CardTitle className="text-xl">Reset Password</CardTitle>
+                    <CardDescription>Enter your email to receive a reset link</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        placeholder="your@email.com"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        className="pl-10"
+                        disabled={isResetting}
+                        autoFocus
+                      />
+                    </div>
+                    {resetEmailError && (
+                      <p className="text-sm text-destructive">{resetEmailError}</p>
+                    )}
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isResetting}>
+                    {isResetting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      'Send Reset Link'
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           By continuing, you agree to our Terms of Service and Privacy Policy.

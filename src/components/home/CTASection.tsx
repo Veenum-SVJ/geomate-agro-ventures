@@ -2,8 +2,31 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Phone, Mail } from 'lucide-react';
 import { AnimatedSection } from './AnimatedSection';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export function CTASection() {
+  // Fetch contact settings from database
+  const { data: settings } = useQuery({
+    queryKey: ['public-settings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_settings')
+        .select('*');
+      if (error) throw error;
+      const map: Record<string, any> = {};
+      data?.forEach((s: any) => {
+        map[s.key] = s.value;
+      });
+      return map;
+    },
+  });
+
+  const contact = settings?.contact || {
+    phone: '+234 801 234 5678',
+    email: 'info@geomateagro.com',
+  };
+
   return (
     <section className="relative py-24 lg:py-32 overflow-hidden">
       {/* Background */}
@@ -55,23 +78,23 @@ export function CTASection() {
             </div>
           </AnimatedSection>
 
-          {/* Contact Info */}
+          {/* Contact Info - Now Dynamic */}
           <AnimatedSection delay={0.3}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-primary-foreground/80">
               <a
-                href="tel:+2348012345678"
+                href={`tel:${contact.phone.replace(/\s+/g, '')}`}
                 className="inline-flex items-center gap-2 hover:text-primary-foreground transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                +234 801 234 5678
+                {contact.phone}
               </a>
               <span className="hidden sm:inline text-primary-foreground/40">|</span>
               <a
-                href="mailto:info@geomateagro.com"
+                href={`mailto:${contact.email}`}
                 className="inline-flex items-center gap-2 hover:text-primary-foreground transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                info@geomateagro.com
+                {contact.email}
               </a>
             </div>
           </AnimatedSection>

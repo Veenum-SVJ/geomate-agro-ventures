@@ -4,13 +4,24 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.89.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+const ALLOWED_ORIGIN = Deno.env.get("SITE_URL") || "https://dgkhozopymhwzjbrorcx.lovable.app";
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 interface NotificationRequest {
   invitationId: string;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 serve(async (req) => {
@@ -104,8 +115,11 @@ serve(async (req) => {
       .eq("id", invitation.farm_id)
       .single();
 
-    const acceptedUserName = acceptedUserProfile?.full_name || acceptedUserProfile?.email || invitation.email;
-    const farmName = farm?.name || "your farm";
+    const acceptedUserName = escapeHtml(acceptedUserProfile?.full_name || acceptedUserProfile?.email || invitation.email);
+    const farmName = escapeHtml(farm?.name || "your farm");
+    const safeInviterName = escapeHtml(inviterProfile.full_name || "there");
+    const safeInvitationEmail = escapeHtml(invitation.email);
+    const safeRole = escapeHtml(invitation.role);
 
     console.log("Sending notification to:", inviterProfile.email);
 
@@ -136,14 +150,14 @@ serve(async (req) => {
               <h1 style="margin: 0;">Invitation Accepted!</h1>
             </div>
             <div class="content">
-              <p>Hi ${inviterProfile.full_name || "there"},</p>
+              <p>Hi ${safeInviterName},</p>
               <p>Great news! Your team invitation has been accepted.</p>
               
               <div class="user-card">
                 <p style="margin: 0 0 8px 0;"><strong>${acceptedUserName}</strong></p>
-                <p style="margin: 0; color: #6b7280; font-size: 14px;">${invitation.email}</p>
+                <p style="margin: 0; color: #6b7280; font-size: 14px;">${safeInvitationEmail}</p>
                 <p style="margin: 8px 0 0 0;">
-                  Joined as: <span class="role-badge">${invitation.role}</span>
+                  Joined as: <span class="role-badge">${safeRole}</span>
                 </p>
               </div>
               

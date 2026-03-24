@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Phone, Mail, MapPin } from 'lucide-react';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -16,6 +18,29 @@ const navLinks = [
 export function PublicLayout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Fetch contact settings from database
+  const { data: settings } = useQuery({
+    queryKey: ['public-settings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('website_settings')
+        .select('*');
+      if (error) throw error;
+      const map: Record<string, any> = {};
+      data?.forEach((s: any) => {
+        map[s.key] = s.value;
+      });
+      return map;
+    },
+  });
+
+  const contact = settings?.contact || {
+    address: 'Geomate Agro Ventures\nIbadan, Oyo State, Nigeria',
+    phone: '+234 801 234 5678',
+    email: 'info@geomateagro.com',
+    business_hours: 'Mon - Fri: 8AM - 6PM\nSat: 9AM - 4PM\nSun: Closed',
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -40,11 +65,10 @@ export function PublicLayout() {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    location.pathname === link.path
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === link.path
                       ? 'bg-primary text-primary-foreground'
                       : 'text-foreground hover:bg-secondary'
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -71,11 +95,10 @@ export function PublicLayout() {
                         key={link.path}
                         to={link.path}
                         onClick={() => setMobileOpen(false)}
-                        className={`px-4 py-3 rounded-md text-sm font-medium transition-colors ${
-                          location.pathname === link.path
+                        className={`px-4 py-3 rounded-md text-sm font-medium transition-colors ${location.pathname === link.path
                             ? 'bg-primary text-primary-foreground'
                             : 'text-foreground hover:bg-secondary'
-                        }`}
+                          }`}
                       >
                         {link.label}
                       </Link>
@@ -135,42 +158,42 @@ export function PublicLayout() {
               </ul>
             </div>
 
-            {/* Contact Info */}
+            {/* Contact Info - Now Dynamic */}
             <div>
               <h4 className="font-semibold text-foreground mb-4">Contact Us</h4>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4 mt-0.5 text-primary" />
-                  <span>Ibadan, Oyo State, Nigeria</span>
+                  <span>{contact.address.split('\n')[0]}<br />{contact.address.split('\n').slice(1).join(', ')}</span>
                 </li>
                 <li>
                   <a
-                    href="tel:+2348012345678"
+                    href={`tel:${contact.phone.replace(/\s+/g, '')}`}
                     className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     <Phone className="h-4 w-4 text-primary" />
-                    +234 801 234 5678
+                    {contact.phone}
                   </a>
                 </li>
                 <li>
                   <a
-                    href="mailto:info@geomateagro.com"
+                    href={`mailto:${contact.email}`}
                     className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     <Mail className="h-4 w-4 text-primary" />
-                    info@geomateagro.com
+                    {contact.email}
                   </a>
                 </li>
               </ul>
             </div>
 
-            {/* Hours */}
+            {/* Hours - Now Dynamic */}
             <div>
               <h4 className="font-semibold text-foreground mb-4">Farm Hours</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Monday - Friday: 8am - 6pm</li>
-                <li>Saturday: 9am - 4pm</li>
-                <li>Sunday: Closed</li>
+                {contact.business_hours.split('\n').map((line: string, index: number) => (
+                  <li key={index}>{line}</li>
+                ))}
               </ul>
             </div>
           </div>

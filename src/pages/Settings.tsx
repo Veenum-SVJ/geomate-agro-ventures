@@ -10,15 +10,23 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { User, Building2, Palette, Bell } from 'lucide-react';
+import { User, Building2, Palette, Bell, MessageCircle } from 'lucide-react';
+
+interface NotificationPreferences {
+  whatsapp_notifications: boolean;
+  task_reminders: boolean;
+  low_stock_alerts: boolean;
+  user_id?: string;
+}
 
 export default function Settings() {
   const { user } = useAuth();
   const { data: farmId } = useFarmId();
   const queryClient = useQueryClient();
-  const [darkMode, setDarkMode] = useState(() => 
+  const [darkMode, setDarkMode] = useState(() =>
     document.documentElement.classList.contains('dark')
   );
+  const [testingWhatsApp, setTestingWhatsApp] = useState(false);
 
   // Fetch profile
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -31,6 +39,26 @@ export default function Settings() {
         .maybeSingle();
       if (error) throw error;
       return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch notification preferences
+  const { data: preferences, isLoading: prefsLoading } = useQuery({
+    queryKey: ['notification_preferences', user?.id],
+    queryFn: async (): Promise<NotificationPreferences> => {
+      const fromAny = supabase.from as unknown as (table: string) => ReturnType<typeof supabase.from>;
+      const { data, error } = await fromAny('notification_preferences')
+        .select('*')
+        .eq('user_id', user!.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      // If no preferences exist, return defaults (schema should handle creation, but fallback here)
+      if (!data) return { whatsapp_notifications: true, task_reminders: true, low_stock_alerts: true } as NotificationPreferences;
+
+      return data as unknown as NotificationPreferences;
     },
     enabled: !!user?.id,
   });
@@ -53,18 +81,77 @@ export default function Settings() {
   // Update profile mutation
   const updateProfile = useMutation({
     mutationFn: async (updates: { full_name?: string; phone?: string }) => {
-      const { error } = await supabase
+      console.log('Attempting to update profile:', updates, 'for user:', user!.id);
+      const { data, error } = await supabase
         .from('profiles')
-        .update(updates)
-        .eq('user_id', user!.id);
-      if (error) throw error;
+        .upsert(
+          {
+            user_id: user!.id,
+            email: user!.email,
+            ...updates,
+          },
+          { onConflict: 'user_id' }
+        )
+        .select();
+      if (error) {
+        console.error('Profile update error:', error);
+        throw error;
+      }
+      console.log('Profile updated successfully:', data);
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       toast.success('Profile updated');
     },
-    onError: () => toast.error('Failed to update profile'),
+    onError: (error: Error) => {
+      console.error('Mutation error:', error);
+      toast.error(`Failed to update profile: ${error.message || 'Unknown error'}`);
+    },
   });
+
+  // Update preferences mutation
+  const updatePreferences = useMutation({
+    mutationFn: async (updates: { whatsapp_notifications?: boolean; task_reminders?: boolean; low_stock_alerts?: boolean }) => {
+      const fromAny = supabase.from as unknown as (table: string) => ReturnType<typeof supabase.from>;
+      const { error } = await fromAny('notification_preferences')
+        .upsert({ user_id: user!.id, ...updates }, { onConflict: 'user_id' });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notification_preferences'] });
+      toast.success('Notification settings saved');
+    },
+    onError: () => toast.error('Failed to save notification settings'),
+  });
+
+  // Test WhatsApp mutation
+  const testWhatsApp = async () => {
+    if (!profile?.phone) {
+      toast.error('Please save your phone number first');
+      return;
+    }
+
+    setTestingWhatsApp(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-whatsapp', {
+        body: {
+          to: profile.phone,
+          message: 'Hello from Geomate Agro! 👋 This is a test notification.'
+        }
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      toast.success('Test message sent! Check your WhatsApp.');
+    } catch (error: unknown) {
+      console.error('Test failed:', error);
+      toast.error(`Test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setTestingWhatsApp(false);
+    }
+  };
 
   const handleThemeToggle = (checked: boolean) => {
     setDarkMode(checked);
@@ -132,19 +219,23 @@ export default function Settings() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="full_name">Full Name</Label>
-                    <Input 
-                      id="full_name" 
-                      name="full_name" 
-                      defaultValue={profile?.full_name || ''} 
+                    <Input
+                      id="full_name"
+                      name="full_name"
+                      defaultValue={profile?.full_name || ''}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input 
-                      id="phone" 
-                      name="phone" 
-                      defaultValue={profile?.phone || ''} 
+                    <Label htmlFor="phone">Phone (WhatsApp)</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      defaultValue={profile?.phone || ''}
+                      placeholder="+234..."
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Required for WhatsApp notifications (include country code)
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label>Subscription</Label>
@@ -213,8 +304,8 @@ export default function Settings() {
                     Switch between light and dark themes
                   </p>
                 </div>
-                <Switch 
-                  checked={darkMode} 
+                <Switch
+                  checked={darkMode}
                   onCheckedChange={handleThemeToggle}
                 />
               </div>
@@ -226,36 +317,73 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle>Notifications</CardTitle>
-              <CardDescription>Configure notification preferences</CardDescription>
+              <CardDescription>Configure WhatsApp notification preferences</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Email Notifications</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Receive updates via email
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Task Reminders</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get reminded about upcoming tasks
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Low Stock Alerts</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Alert when inventory is running low
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
+            <CardContent className="space-y-6">
+              {prefsLoading ? (
+                <p>Loading preferences...</p>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="flex items-center gap-2">
+                        WhatsApp Notifications
+                        <MessageCircle className="h-4 w-4 text-green-600" />
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive updates via WhatsApp
+                      </p>
+                    </div>
+                    <Switch
+                      checked={preferences?.whatsapp_notifications}
+                      onCheckedChange={(checked) => updatePreferences.mutate({ whatsapp_notifications: checked })}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Task Reminders</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Get reminded about pending tasks (Daily 8 AM)
+                      </p>
+                    </div>
+                    <Switch
+                      checked={preferences?.task_reminders}
+                      onCheckedChange={(checked) => updatePreferences.mutate({ task_reminders: checked })}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Low Stock Alerts</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Alert when inventory is running low (Daily 9 AM)
+                      </p>
+                    </div>
+                    <Switch
+                      checked={preferences?.low_stock_alerts}
+                      onCheckedChange={(checked) => updatePreferences.mutate({ low_stock_alerts: checked })}
+                    />
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {profile?.phone ? (
+                        <>Sending notifications to: <span className="font-medium text-foreground">{profile.phone}</span></>
+                      ) : (
+                        <span className="text-destructive">Please add your phone number in the Account tab to receive notifications.</span>
+                      )}
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={testWhatsApp}
+                      disabled={!profile?.phone || testingWhatsApp}
+                    >
+                      {testingWhatsApp ? 'Sending...' : 'Send Test WhatsApp Message'}
+                    </Button>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

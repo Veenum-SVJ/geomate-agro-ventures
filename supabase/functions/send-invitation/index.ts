@@ -4,8 +4,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.89.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+const ALLOWED_ORIGIN = Deno.env.get("SITE_URL") || "https://dgkhozopymhwzjbrorcx.lovable.app";
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -15,6 +17,15 @@ interface InvitationRequest {
   farmId: string;
   farmName: string;
   inviterName: string;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 serve(async (req) => {
@@ -52,6 +63,12 @@ serve(async (req) => {
     }
 
     const { email, role, farmId, farmName, inviterName }: InvitationRequest = await req.json();
+
+    // Sanitize user inputs for HTML email
+    const safeEmail = escapeHtml(email);
+    const safeRole = escapeHtml(role);
+    const safeFarmName = escapeHtml(farmName);
+    const safeInviterName = escapeHtml(inviterName || '');
     
     console.log("Creating invitation for:", email, "to farm:", farmId, "with role:", role);
 
@@ -138,7 +155,7 @@ serve(async (req) => {
             </div>
             <div class="content">
               <p>Hi there,</p>
-              <p><strong>${inviterName || 'A team member'}</strong> has invited you to join <strong>${farmName}</strong> as a <span class="role-badge">${role}</span>.</p>
+              <p><strong>${safeInviterName || 'A team member'}</strong> has invited you to join <strong>${safeFarmName}</strong> as a <span class="role-badge">${safeRole}</span>.</p>
               <p>Click the button below to accept the invitation and join the team:</p>
               <p style="text-align: center;">
                 <a href="${inviteLink}" class="button">Accept Invitation</a>

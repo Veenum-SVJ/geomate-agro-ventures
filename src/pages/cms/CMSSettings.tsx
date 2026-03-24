@@ -16,7 +16,7 @@ type SettingsMap = Record<string, any>;
 export default function CMSSettings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   const [contact, setContact] = useState({
     address: '',
     phone: '',
@@ -25,14 +25,14 @@ export default function CMSSettings() {
     business_hours: '',
     maps_url: '',
   });
-  
+
   const [stats, setStats] = useState([
     { number: '', label: '' },
     { number: '', label: '' },
     { number: '', label: '' },
     { number: '', label: '' },
   ]);
-  
+
   const [mission, setMission] = useState({ title: '', content: '' });
   const [vision, setVision] = useState({ title: '', content: '' });
   const [hero, setHero] = useState({ title: '', subtitle: '', image_url: '' });
@@ -73,16 +73,27 @@ export default function CMSSettings() {
     mutationFn: async ({ key, value }: { key: string; value: any }) => {
       const { error } = await supabase
         .from('website_settings')
-        .update({ value, updated_at: new Date().toISOString() })
-        .eq('key', key);
-      if (error) throw error;
+        .upsert(
+          { key, value, updated_at: new Date().toISOString() },
+          { onConflict: 'key' }
+        );
+      if (error) {
+        console.error('Settings save error:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-settings'] });
+      queryClient.invalidateQueries({ queryKey: ['public-settings'] });
       toast({ title: 'Settings saved' });
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to save settings', variant: 'destructive' });
+    onError: (error: any) => {
+      console.error('Save mutation error:', error);
+      toast({
+        title: 'Error',
+        description: error?.message || 'Failed to save settings',
+        variant: 'destructive'
+      });
     },
   });
 
