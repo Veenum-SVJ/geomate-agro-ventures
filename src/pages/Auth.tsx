@@ -133,13 +133,7 @@ const Auth = () => {
       <div className="w-full max-w-md animate-fade-in">
         {/* Logo and branding */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary mb-4">
-            <span className="text-primary-foreground font-bold text-2xl">G</span>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">
-            <span>Geomate</span>
-            <span className="text-primary"> Agro</span>
-          </h1>
+          <img src="/GeomateAgro_Logo.png" alt="Geomate Agro" className="h-24 w-auto mx-auto mb-4 object-contain" />
           <p className="text-muted-foreground mt-2">
             Admin Dashboard Login
           </p>

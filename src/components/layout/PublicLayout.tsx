@@ -50,13 +50,7 @@ export function PublicLayout() {
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">G</span>
-              </div>
-              <div className="hidden sm:block">
-                <span className="font-bold text-lg text-foreground">Geomate</span>
-                <span className="text-primary font-bold text-lg"> Agro</span>
-              </div>
+              <img src="/GeomateAgro_Logo.png" alt="Geomate Agro" className="h-16 w-auto object-contain scale-125 origin-left" />
             </Link>
 
             {/* Desktop Navigation */}
@@ -128,13 +122,7 @@ export function PublicLayout() {
             {/* Brand */}
             <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
-                <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-lg">G</span>
-                </div>
-                <div>
-                  <span className="font-bold text-lg text-foreground">Geomate</span>
-                  <span className="text-primary font-bold text-lg"> Agro</span>
-                </div>
+                <img src="/GeomateAgro_Logo.png" alt="Geomate Agro" className="h-16 w-auto object-contain" />
               </div>
               <p className="text-sm text-muted-foreground">
                 Modern agriculture for a sustainable future. Quality products from our farm to your table.

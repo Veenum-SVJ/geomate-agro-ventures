@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Egg, Fish, Wheat, BarChart3, Users, Shield } from 'lucide-react';
-import logo from '@/assets/logo.png';
+// Logo is loaded from public folder
 
 const features = [
   {
@@ -54,9 +54,7 @@ const Index = () => {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
         <nav className="relative container mx-auto px-4 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="FarmSync NG" className="h-14 w-auto" />
-          </div>
+            <img src="/GeomateAgro_Logo.png" alt="Geomate Agro" className="h-20 w-auto scale-125 origin-left" />
           <Button onClick={() => navigate('/auth')} variant="default">
             Get Started
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -142,10 +140,10 @@ const Index = () => {
       <footer className="py-8 border-t border-border">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <img src={logo} alt="FarmSync NG" className="h-10 w-auto" />
+            <img src="/GeomateAgro_Logo.png" alt="Geomate Agro" className="h-16 w-auto" />
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FarmSync NG. All rights reserved.
+            © {new Date().getFullYear()} Geomate Agro Ventures. All rights reserved.
           </p>
         </div>
       </footer>

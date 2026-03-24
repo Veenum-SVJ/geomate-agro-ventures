@@ -181,13 +181,7 @@ export function AppSidebar() {
     <Sidebar className="border-r border-sidebar-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">G</span>
-          </div>
-          <div>
-            <span className="font-bold text-foreground">Geomate</span>
-            <span className="text-primary font-bold"> Agro</span>
-          </div>
+          <img src="/GeomateAgro_Logo.png" alt="Geomate Agro" className="h-10 w-auto" />
         </div>
       </SidebarHeader>
 
